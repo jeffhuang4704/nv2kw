@@ -1,5 +1,14 @@
 ## Group policy conversion experiment
 
+I'm trying to understand how expressions are used in the group policy field.
+
+I noticed that the behavior doesn't match my expectations:
+
+When I use `&&` in the expression, it behaves like an OR operator.
+Conversely, when I use `||`, it behaves like an AND operator.
+
+Am I misunderstanding something?
+
 ### The experiement
 TODO: describe Test1 and Test2
 and the confusion of it the && , ||
