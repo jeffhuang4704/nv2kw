@@ -1,5 +1,6 @@
 ## Group policy conversion experiment
 
+### Background
 I'm trying to understand how expressions are used in the group policy field.
 
 I noticed that the behavior doesn't match my expectations:
@@ -9,20 +10,28 @@ Conversely, when I use `||`, it behaves like an AND operator.
 
 Am I misunderstanding something?
 
+From [Kubewarden doc](https://docs.kubewarden.io/reference/CRDs#admissionpolicygroupspec), it states
+```
+Expression is the evaluation expression to accept or reject the admission request under evaluation. This field uses CEL as the expression language for the policy groups. Each policy in the group will be represented as a function call in the expression with the same name as the policy defined in the group. 
+The expression field should be a valid CEL expression that evaluates to a boolean value. 
+
+If the expression evaluates to true, the group policy will be considered as accepted, otherwise, it will be considered as rejected. 
+```
+
 ### The experiement
-TODO: describe Test1 and Test2
-and the confusion of it the && , ||
+
+Two set of tests
 
 ### Test A - reject_latest() && use_ban_label()
 
 A group policy consists of two sub-policies defined by the expression: `reject_latest() && use_ban_label()`.
 
 Use a different resource for testing. Below is a summary of the results:
-| Resource    | Result                                    |
+| Resource    | expression evaluates |Result                                    |
 | ---------- | ---------------------------------------------- |
-| Resource 1 uses `ban1` label | rejected ❌              |
-| Resource 2 uses `latest` tag  | rejected ❌ |
-| Resource 3 uses `latest` tag and `ban1` label |rejected ❌ |
+| Resource 1 uses `ban1` label | False (True && False) |rejected ❌              |
+| Resource 2 uses `latest` tag  | False (False && True) |rejected ❌ |
+| Resource 3 uses `latest` tag and `ban1` label | True (True && True) |rejected ❌ |
 
 <details><summary>The following are the policy</summary>
 
