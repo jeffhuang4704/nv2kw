@@ -15,7 +15,7 @@ Use a different resource for testing. Below is a summary of the results:
 | Resource 2 uses `latest` tag  | rejected ❌ |
 | Resource 3 uses `latest` tag and `ban1` label |rejected ❌ |
 
-<details><summary>The following are the policy YAML file</summary>
+<details><summary>The following are the policy</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat  grouppolicy1.yaml
@@ -56,9 +56,9 @@ demo1   default                    true              protect   protect         a
 ```
 </details>
 
-The following are the YAML files and their execution results:
+The following are the resources and their execution results:
 
-<details><summary>1️⃣ Resource 1 uses the `ban1` label, and its evaluation result is rejected.</summary>
+<details><summary>Resource 1 uses the `ban1` label, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 1_deploy-label.yaml
@@ -96,7 +96,7 @@ Error from server: error when creating "1_deploy-label.yaml": admission webhook 
 ```
 </details>
 
-<details><summary>2️⃣ Resource 2 uses `latest` tag, and its evaluation result is rejected.</summary>
+<details><summary>Resource 2 uses `latest` tag, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 2_deploy-latest.yaml
@@ -131,7 +131,7 @@ Error from server: error when creating "2_deploy-latest.yaml": admission webhook
 ```
 </details>
 
-<details><summary>3️⃣ Resource 3 uses `latest` tag and `ban1` label, and its evaluation result is rejected.</summary>
+<details><summary>Resource 3 uses `latest` tag and `ban1` label, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 3_deploy-latest_and_banned_label.yaml
@@ -173,7 +173,15 @@ Error from server: error when creating "3_deploy-latest_and_banned_label.yaml": 
 
 The ClusterAdmissionPolicyGroup remains the same, except the expression has been changed from && to ||.
 
-<details><summary>The following are the policy YAML file:</summary>
+Use a different resource for testing. Below is a summary of the results:
+| Resource    | Result                                    |
+| ---------- | ---------------------------------------------- |
+| Resource 1 uses `ban1` label | accepted ✔️              |
+| Resource 2 uses `latest` tag  | accepted ✔️ |
+| Resource 3 uses `latest` tag and `ban1` label |rejected ❌ |
+
+
+<details><summary>The following are the policy:</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat grouppolicy2.yaml
@@ -207,9 +215,9 @@ spec:
 ```
 </details>
 
-The following are the YAML files and their execution results:
+The following are the resources and their execution results:
 
-<details><summary>1️⃣ Resource 1 uses `ban1` label, and its evaluation result is accepted.</summary>
+<details><summary>Resource 1 uses `ban1` label, and its evaluation result is accepted.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 1_deploy-label.yaml
@@ -239,13 +247,13 @@ spec:
         resources: {}
 status: {}
 
-# allowed  ✔️
+# accepted  ✔️
 neuvector@ubuntu2204-F:~/kubewarden/test$ kubectl apply -f 1_deploy-label.yaml
 deployment.apps/my-dep created
 ```
 </details>
 
-<details><summary>2️⃣ Resource 2 uses `latest` tag, and its evaluation result is accepted.</summary>
+<details><summary>Resource 2 uses `latest` tag, and its evaluation result is accepted.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 2_deploy-latest.yaml
@@ -274,13 +282,13 @@ spec:
         resources: {}
 status: {}
 
-# allowed  ✔️
+# accepted  ✔️
 neuvector@ubuntu2204-F:~/kubewarden/test$ kubectl apply -f 2_deploy-latest.yaml
 deployment.apps/my-dep created
 ```
 </details>
 
-<details><summary>3️⃣ Resource 3 uses `latest` tag and `ban1` label, and its evaluation result is rejected.</summary>
+<details><summary>Resource 3 uses `latest` tag and `ban1` label, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 3_deploy-latest_and_banned_label.yaml
@@ -315,10 +323,3 @@ neuvector@ubuntu2204-F:~/kubewarden/test$ kubectl apply -f 3_deploy-latest_and_b
 Error from server: error when creating "3_deploy-latest_and_banned_label.yaml": admission webhook "clusterwide-group-demo2.kubewarden.admission" denied the request: rejected - reject_latest() || use_ban_label()
 ```
 </details>
-
-
-### The Doc
-
-```
-Expression is the evaluation expression to accept or reject the admission request under evaluation. This field uses CEL as the expression language for the policy groups. Each policy in the group will be represented as a function call in the expression with the same name as the policy defined in the group. The expression field should be a valid CEL expression that evaluates to a boolean value. If the expression evaluates to true, the group policy will be considered as accepted, otherwise, it will be considered as rejected. This expression allows grouping policies calls and perform logical operations on the results of the policies. See Kubewarden documentation to learn about all the features available.
-```
