@@ -15,8 +15,7 @@ Use a different resource for testing. Below is a summary of the results:
 | Resource 2 uses `latest` tag  | rejected ❌ |
 | Resource 3 uses `latest` tag and `ban1` label |rejected ❌ |
 
-The following are the policy YAML file:
-<details><summary>yaml files</summary>
+<details><summary>The following are the policy YAML file</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat  grouppolicy1.yaml
@@ -97,7 +96,7 @@ Error from server: error when creating "1_deploy-label.yaml": admission webhook 
 ```
 </details>
 
-<details><summary>2️⃣ Resource 2 uses `latest` tag</summary>
+<details><summary>2️⃣ Resource 2 uses `latest` tag, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 2_deploy-latest.yaml
@@ -132,7 +131,7 @@ Error from server: error when creating "2_deploy-latest.yaml": admission webhook
 ```
 </details>
 
-<details><summary>3️⃣ Resource 3 uses `latest` tag and `ban1` label</summary>
+<details><summary>3️⃣ Resource 3 uses `latest` tag and `ban1` label, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 3_deploy-latest_and_banned_label.yaml
@@ -174,8 +173,7 @@ Error from server: error when creating "3_deploy-latest_and_banned_label.yaml": 
 
 The ClusterAdmissionPolicyGroup remains the same, except the expression has been changed from && to ||.
 
-The following are the policy YAML file:
-<details><summary>yaml files</summary>
+<details><summary>The following are the policy YAML file:</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat grouppolicy2.yaml
@@ -209,13 +207,9 @@ spec:
 ```
 </details>
 
-
 The following are the YAML files and their execution results:
 
-
-Resource 1 uses `ban1` label
-
-<details><summary>yaml and evaluation result</summary>
+<details><summary>1️⃣ Resource 1 uses `ban1` label, and its evaluation result is accepted.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 1_deploy-label.yaml
@@ -251,9 +245,7 @@ deployment.apps/my-dep created
 ```
 </details>
 
-
-Resource 2 uses `latest` tag
-<details><summary>yaml and evaluation result</summary>
+<details><summary>2️⃣ Resource 2 uses `latest` tag, and its evaluation result is accepted.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 2_deploy-latest.yaml
@@ -288,9 +280,7 @@ deployment.apps/my-dep created
 ```
 </details>
 
-Resource 3 uses `latest` tag and `ban1` label
-
-<details><summary>yaml and evaluation result</summary>
+<details><summary>3️⃣ Resource 3 uses `latest` tag and `ban1` label, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 3_deploy-latest_and_banned_label.yaml
