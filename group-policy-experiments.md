@@ -6,6 +6,10 @@ and the confusion of it the && , ||
 
 ### Test 1 - reject_latest() && use_ban_label()
 
+A group policy consists of two sub-policies defined by the expression: reject_latest() && use_ban_label().
+
+<details><summary>yaml</summary>
+
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat  grouppolicy1.yaml
 apiVersion: policies.kubewarden.io/v1
@@ -43,8 +47,11 @@ neuvector@ubuntu2204-F:~/kubewarden/test$ kubectl get capg
 NAME    POLICY SERVER   MUTATING   BACKGROUNDAUDIT   MODE      OBSERVED MODE   STATUS   AGE
 demo1   default                    true              protect   protect         active   3m23s
 ```
+</details>
 
-Resource 1 uses `ban1` label
+Resource 1 uses the `ban1` label, and its evaluation result is rejected.
+
+<details><summary>yaml and evaluation result</summary>
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 1_deploy-label.yaml
 apiVersion: apps/v1
@@ -72,11 +79,15 @@ spec:
         name: busybox
         resources: {}
 status: {}
+```
 
+```
 ## rejected ❌
 neuvector@ubuntu2204-F:~/kubewarden/test$ kubectl apply -f 1_deploy-label.yaml
 Error from server: error when creating "1_deploy-label.yaml": admission webhook "clusterwide-group-demo1.kubewarden.admission" denied the request: rejected - reject_latest() && use_ban_label()
 ```
+</details>
+
 
 Resource 2 uses `latest` tag
 ```
@@ -153,7 +164,7 @@ Error from server: error when creating "3_deploy-latest_and_banned_label.yaml": 
 
 ### Test 2 - reject_latest() || use_ban_label()
 
-Same ClusterAdmissionPolicyGroup except the expression changed from `&&` to `||`
+The ClusterAdmissionPolicyGroup remains the same, except the expression has been changed from && to ||.
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat grouppolicy2.yaml
