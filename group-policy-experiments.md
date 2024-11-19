@@ -52,6 +52,7 @@ demo1   default                    true              protect   protect         a
 Resource 1 uses the `ban1` label, and its evaluation result is rejected.
 
 <details><summary>yaml and evaluation result</summary>
+
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 1_deploy-label.yaml
 apiVersion: apps/v1
