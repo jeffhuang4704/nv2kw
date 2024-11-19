@@ -59,9 +59,7 @@ demo1   default                    true              protect   protect         a
 
 The following are the YAML files and their execution results:
 
-1️⃣ Resource 1 uses the `ban1` label, and its evaluation result is rejected.
-
-<details><summary>yaml and evaluation result</summary>
+<details><summary>1️⃣ Resource 1 uses the `ban1` label, and its evaluation result is rejected.</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 1_deploy-label.yaml
@@ -99,10 +97,7 @@ Error from server: error when creating "1_deploy-label.yaml": admission webhook 
 ```
 </details>
 
-
-2️⃣ Resource 2 uses `latest` tag
-
-<details><summary>yaml and evaluation result</summary>
+<details><summary>2️⃣ Resource 2 uses `latest` tag</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 2_deploy-latest.yaml
@@ -137,9 +132,7 @@ Error from server: error when creating "2_deploy-latest.yaml": admission webhook
 ```
 </details>
 
-3️⃣ Resource 3 uses `latest` tag and `ban1` label
-
-<details><summary>yaml and evaluation result</summary>
+<details><summary>3️⃣ Resource 3 uses `latest` tag and `ban1` label</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 3_deploy-latest_and_banned_label.yaml
