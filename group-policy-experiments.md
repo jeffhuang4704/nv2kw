@@ -4,11 +4,19 @@
 TODO: describe Test1 and Test2
 and the confusion of it the && , ||
 
-### Test 1 - reject_latest() && use_ban_label()
+### Test A - reject_latest() && use_ban_label()
 
 A group policy consists of two sub-policies defined by the expression: `reject_latest() && use_ban_label()`.
 
-<details><summary>yaml</summary>
+Use a different resource for testing. Below is a summary of the results:
+| Resource    | Result                                    |
+| ---------- | ---------------------------------------------- |
+| Resource 1 uses `ban1` label | rejected ❌              |
+| Resource 2 uses `latest` tag  | rejected ❌ |
+| Resource 3 uses `latest` tag and `ban1` label |rejected ❌ |
+
+The following are the YAML files and their execution results:
+<details><summary>yaml files</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat  grouppolicy1.yaml
@@ -49,7 +57,7 @@ demo1   default                    true              protect   protect         a
 ```
 </details>
 
-Resource 1 uses the `ban1` label, and its evaluation result is rejected.
+1️⃣ Resource 1 uses the `ban1` label, and its evaluation result is rejected.
 
 <details><summary>yaml and evaluation result</summary>
 
@@ -90,7 +98,10 @@ Error from server: error when creating "1_deploy-label.yaml": admission webhook 
 </details>
 
 
-Resource 2 uses `latest` tag
+2️⃣ Resource 2 uses `latest` tag
+
+<details><summary>yaml and evaluation result</summary>
+
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 2_deploy-latest.yaml
 apiVersion: apps/v1
@@ -122,8 +133,12 @@ status: {}
 neuvector@ubuntu2204-F:~/kubewarden/test$ kubectl apply -f 2_deploy-latest.yaml
 Error from server: error when creating "2_deploy-latest.yaml": admission webhook "clusterwide-group-demo1.kubewarden.admission" denied the request: rejected - reject_latest() && use_ban_label()
 ```
+</details>
 
-Resource 3 uses `latest` tag and `ban1` label
+3️⃣ Resource 3 uses `latest` tag and `ban1` label
+
+<details><summary>yaml and evaluation result</summary>
+
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test$ cat 3_deploy-latest_and_banned_label.yaml
 apiVersion: apps/v1
@@ -156,14 +171,11 @@ status: {}
 neuvector@ubuntu2204-F:~/kubewarden/test$ kubectl apply -f 3_deploy-latest_and_banned_label.yaml
 Error from server: error when creating "3_deploy-latest_and_banned_label.yaml": admission webhook "clusterwide-group-demo1.kubewarden.admission" denied the request: rejected - reject_latest() && use_ban_label()
 ```
+</details>
 
-| Resource    | Result                                    |
-| ---------- | ---------------------------------------------- |
-| Resource 1 uses `ban1` label | rejected ❌              |
-| Resource 2 uses `latest` tag  | rejected ❌ |
-| Resource 3 uses `latest` tag and `ban1` label |rejected ❌ |
 
-### Test 2 - reject_latest() || use_ban_label()
+
+### Test B - reject_latest() || use_ban_label()
 
 The ClusterAdmissionPolicyGroup remains the same, except the expression has been changed from && to ||.
 
