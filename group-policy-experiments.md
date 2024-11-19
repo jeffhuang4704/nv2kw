@@ -6,7 +6,7 @@ and the confusion of it the && , ||
 
 ### Test 1 - reject_latest() && use_ban_label()
 
-A group policy consists of two sub-policies defined by the expression: reject_latest() && use_ban_label().
+A group policy consists of two sub-policies defined by the expression: `reject_latest() && use_ban_label()`.
 
 <details><summary>yaml</summary>
 
