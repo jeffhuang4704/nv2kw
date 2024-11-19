@@ -14,8 +14,8 @@ Am I misunderstanding something?
 
 I perform two sets of tests using the same policy, with the only difference being the expressions.
 
-Test A => reject_latest() && use_ban_label()
-Test B => reject_latest() || use_ban_label()
+-- Test A => reject_latest() && use_ban_label()  
+-- Test B => reject_latest() || use_ban_label()  
 
 ### Test A - reject_latest() && use_ban_label()
 
