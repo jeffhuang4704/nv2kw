@@ -28,7 +28,7 @@ A group policy consists of two sub-policies defined by the expression: `reject_l
 
 Use a different resource for testing. Below is a summary of the results:
 | Resource    | expression evaluates |Result                                    |
-| ---------- | ---------------------------------------------- |
+| ---------- | --- | ---------------------------------------------- |
 | Resource 1 uses `ban1` label | False (True && False) |rejected ❌              |
 | Resource 2 uses `latest` tag  | False (False && True) |rejected ❌ |
 | Resource 3 uses `latest` tag and `ban1` label | True (True && True) |rejected ❌ |
