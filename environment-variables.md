@@ -1,4 +1,4 @@
-## Enivronment variables
+## Kubewarden Enivronment variables Policy
 
 ### Background
 
@@ -15,7 +15,7 @@ settings:
         - name: "envvar3"
 ```
 
-I observed different results in my experiment. It seems both `envvar3` and `envvar2` are required for access to be allowed.
+However, I observed different results in my experiment. It seems both `envvar3` and `envvar2` are required for access to be allowed.
 
 | Resource    | Result                                    |
 | ---------- | ---------------------------------------------- |
@@ -23,7 +23,7 @@ I observed different results in my experiment. It seems both `envvar3` and `envv
 | Resource 2 uses `envvar2`   | rejected ❌ |
 | Resource 3 uses `envvar3` |rejected ❌ |
 
-
+### Policy and Resources
 
 <details><summary>Kubewarden Policy using anyNotIn</summary>
 
