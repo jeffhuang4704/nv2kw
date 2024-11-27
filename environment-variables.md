@@ -19,7 +19,7 @@ However, I observed different results in my experiment. It seems both `envvar3` 
 
 | Resource    | Result                                    |
 | ---------- | ---------------------------------------------- |
-| Resource 1 uses `envvar2` and `envvar3` label | accepted ✔️              |
+| Resource 1 uses `envvar2` and `envvar3` | accepted ✔️              |
 | Resource 2 uses `envvar2`   | rejected ❌ |
 | Resource 3 uses `envvar3` |rejected ❌ |
 
