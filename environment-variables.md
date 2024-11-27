@@ -2,8 +2,7 @@
 
 ### Background
 
-According to the example in [environment-variable-policy doc](https://github.com/kubewarden/environment-variable-policy),
-
+According to the example in [environment-variable-policy doc](https://github.com/kubewarden/environment-variable-policy?tab=readme-ov-file#examples
 In the following example, only resources that have the `envvar3` or `envvar2` defined will be allowed:
 ```
 settings:
@@ -15,11 +14,13 @@ settings:
         - name: "envvar3"
 ```
 
+Results of an experiment indicate a resource must use both `envvar3` and `envvar2` in order to be allowed.
 | Resource    | Result                                    |
 | ---------- | ---------------------------------------------- |
 | Resource 1 uses `envvar2` and `envvar3` label | accepted ✔️              |
 | Resource 2 uses `envvar2`   | rejected ❌ |
 | Resource 3 uses `envvar3` |rejected ❌ |
+
 
 
 <details><summary>Kubewarden Policy using anyNotIn</summary>
