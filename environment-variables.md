@@ -2,7 +2,8 @@
 
 ### Background
 
-According to the example in [environment-variable-policy doc](https://github.com/kubewarden/environment-variable-policy?tab=readme-ov-file#examples)
+According to the example in [environment-variable-policy doc](https://github.com/kubewarden/environment-variable-policy?tab=readme-ov-file#examples).  
+
 In the following example, only resources that have the `envvar3` or `envvar2` defined will be allowed:
 ```
 settings:
@@ -14,7 +15,8 @@ settings:
         - name: "envvar3"
 ```
 
-Results of an experiment indicate a resource must use both `envvar3` and `envvar2` in order to be allowed.
+I observed different results in my experiment. It seems both `envvar3` and `envvar2` are required for access to be allowed.
+
 | Resource    | Result                                    |
 | ---------- | ---------------------------------------------- |
 | Resource 1 uses `envvar2` and `envvar3` label | accepted ✔️              |
