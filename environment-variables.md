@@ -2,7 +2,27 @@
 
 ### Background
 
-<details><summary>Kubewarden Policy</summary>
+According to the example in [environment-variable-policy doc](https://github.com/kubewarden/environment-variable-policy),
+
+In the following example, only resources that have the `envvar3` or `envvar2` defined will be allowed:
+```
+settings:
+  rules:
+    - reject: anyNotIn
+      environmentVariables:
+        - name: "envvar2"
+          value: "envvar2_value"
+        - name: "envvar3"
+```
+
+| Resource    | Result                                    |
+| ---------- | ---------------------------------------------- |
+| Resource 1 uses `envvar2` and `envvar3` label | accepted ✔️              |
+| Resource 2 uses `envvar2`   | rejected ❌ |
+| Resource 3 uses `envvar3` |rejected ❌ |
+
+
+<details><summary>Kubewarden Policy using anyNotIn</summary>
 
 ```
 neuvector@ubuntu2204-F:~/kubewarden/test_env$ kubectl get cap
