@@ -2,7 +2,7 @@
 
 ### Background
 
-According to the example in [environment-variable-policy doc](https://github.com/kubewarden/environment-variable-policy?tab=readme-ov-file#examples
+According to the example in [environment-variable-policy doc](https://github.com/kubewarden/environment-variable-policy?tab=readme-ov-file#examples)
 In the following example, only resources that have the `envvar3` or `envvar2` defined will be allowed:
 ```
 settings:
