@@ -30,22 +30,19 @@ The following operators are used in these criteria.
     The resource may only use the defined values (whitelist).
 ```
 
-The user input values, it could exist simple regex.
-
-
 The following are some experiments attempting to implement these criteria and their operators. 
 For each, we need to consider the following scenarios, using labels as an example.
 
-scenario 1 - only label key is used
-scenario 2 - label key and value
-scenario 3 - label key and value, and the value has regex
+-- scenario 1 - only label key is used  
+-- scenario 2 - label key and value  
+-- scenario 3 - label key and value, and the value has regex  
 
 TODO: need to mention the object path each resource wll inspect. For example label it might inspect two different places.
 Also the environment variables, it might inspect both image and runtime..
 
 [CEL playground](https://playcel.undistro.io/)
 
-Example Input (use this in CEL playground)
+<details><summary>Example Input (use this in CEL playground)</summary>
 
 ```
 params:
@@ -75,12 +72,16 @@ object:
         app: nginx
 ```
 
+</details>
+
 ### Label criteria
 
 🔴 operator = containsAll
 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
+
+<details><summary>operator = containsAll</summary>
 
 ```
 //"costcenter" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["costcenter"].matches("^aaa")
@@ -111,3 +112,5 @@ object.spec.template.metadata.labels["badlabel1"].matches("^bad.+"))
 
 ^bad.+ ensures that the string starts with "bad" and is followed by at least one character (not just "bad" itself).
 ```
+
+</details>
