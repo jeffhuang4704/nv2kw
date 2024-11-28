@@ -76,7 +76,21 @@ object:
 
 ### Label criteria
 
+TODO: need to do multiple values in scenario 2 and scenario 3.
+
 * 🔴 operator = containsAll
+    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
+    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
+    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
+* 🔴 operator = containsAny
+    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
+    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
+    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
+* 🔴 operator = notContainsAny
+    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
+    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
+    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
+* 🔴 operator = containsOtherThan
     * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
     * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
     * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
