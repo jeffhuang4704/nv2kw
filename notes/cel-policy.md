@@ -88,7 +88,7 @@ For each operator, the following scenarios should be considered.
 * scenario 3b - multiple label key and regex value example: `value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"] ` 
 * scenario 4  - mixed type of values = `["badlabel1", "badlabel2=badvalue2"]`  // TODO: check NeuVector first to see if it works.
 
-<details><summary>operator = containsAll</summary>
+    * <details><summary>operator = containsAll</summary>
 
 ```
 //"costcenter" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["costcenter"].matches("^aaa")
