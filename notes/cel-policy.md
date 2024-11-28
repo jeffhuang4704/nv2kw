@@ -1,7 +1,5 @@
 ## cel policy notes
 
-
-
 We can leverage the Kubewarden CEL policy to implement the following NeuVector criteria.
 - labels
 - annotation
@@ -37,7 +35,7 @@ For each, we need to consider the following scenarios, using labels as an exampl
 -- scenario 2 - label key and value  
 -- scenario 3 - label key and value, and the value has regex  
 
-TODO: need to mention the object path each resource wll inspect. For example label it might inspect two different places.
+🚧 TODO: need to mention the object path each resource wll inspect. For example label it might inspect two different places.
 Also the environment variables, it might inspect both image and runtime..
 
 [CEL playground](https://playcel.undistro.io/)
@@ -76,7 +74,7 @@ object:
 
 ### Label criteria
 
-TODO: need to do multiple values in scenario 2 and scenario 3.
+🚧 TODO: need to do multiple values in scenario 2 and scenario 3.
 
 * 🔴 operator = containsAll
     * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
