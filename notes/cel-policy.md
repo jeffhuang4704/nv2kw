@@ -1,7 +1,7 @@
 ## cel policy notes
 
 ## resources
--- [cel language def](https://github.com/google/cel-spec/blob/v0.18.0/doc/langdef.md#macros)
+-- [cel language def](https://github.com/google/cel-spec/blob/v0.18.0/doc/langdef.md#macros)  
 -- [CEL playground](https://playcel.undistro.io/)
 
 ## notes
