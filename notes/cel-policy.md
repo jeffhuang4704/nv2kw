@@ -72,7 +72,7 @@ object:
 
 </details>
 
-### Label criteria
+### Label criteria and value types
 
 * 🔴 operator = containsAll
 * 🔴 operator = containsAny
@@ -87,6 +87,10 @@ For each operator, the following scenarios should be considered.
 * scenario 3a - label key and regex value, example: `value = ["badlabel1=^bad*"]`  
 * scenario 3b - multiple label key and regex value example: `value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"] ` 
 * scenario 4  - mixed type of values = `["badlabel1", "badlabel2=badvalue2"]`  // TODO: check NeuVector first to see if it works.
+
+### CEL expressions
+
+The following experiments were conducted in the CEL playground. We should later try them in Kubewarden.
 
     <details><summary>operator = containsAll</summary>
 
@@ -131,23 +135,23 @@ For each operator, the following scenarios should be considered.
 
     </details>
 
-<details><summary>operator = containsAny</summary>
+    <details><summary>operator = containsAny</summary>
 
-```
-TODO:
-```
-</details>
+    ```
+    TODO:
+    ```
+    </details>
 
-<details><summary>operator = notContainsAny</summary>
+    <details><summary>operator = notContainsAny</summary>
 
-```
-TODO:
-```
-</details>
+    ```
+    TODO:
+    ```
+    </details>
 
-<details><summary>operator = containsOtherThan</summary>
+    <details><summary>operator = containsOtherThan</summary>
 
-```
-TODO:
-```
-</details>
+    ```
+    TODO:
+    ```
+    </details>
