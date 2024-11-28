@@ -112,6 +112,12 @@ object:
 !("badlabel1" in object.spec.template.metadata.labels && 
 object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
 
+// if we have multiple value
+// value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]  
+!(("badlabel1" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
+    &&
+("badlabel2" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel2"]=="badvalue2"))
+
 // 3️⃣ scenario 3 - label key and regex value
 // operator = containsAll
 // value = ["badlabel1=bad*"]  
