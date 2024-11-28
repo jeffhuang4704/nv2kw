@@ -126,3 +126,24 @@ object.spec.template.metadata.labels["badlabel1"].matches("^bad.+"))
 ```
 
 </details>
+
+<details><summary>operator = containsAny</summary>
+
+```
+TODO:
+```
+</details>
+
+<details><summary>operator = notContainsAny</summary>
+
+```
+TODO:
+```
+</details>
+
+<details><summary>operator = containsOtherThan</summary>
+
+```
+TODO:
+```
+</details>
