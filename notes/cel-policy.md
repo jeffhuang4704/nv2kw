@@ -88,48 +88,48 @@ For each operator, the following scenarios should be considered.
 * scenario 3b - multiple label key and regex value example: `value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"] ` 
 * scenario 4  - mixed type of values = `["badlabel1", "badlabel2=badvalue2"]`  // TODO: check NeuVector first to see if it works.
 
-    * <details><summary>operator = containsAll</summary>
+    <details><summary>operator = containsAll</summary>
 
-```
-//"costcenter" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["costcenter"].matches("^aaa")
+    ```
+    //"costcenter" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["costcenter"].matches("^aaa")
 
-// scenario 1 - only label key is used
-// value = ["badlabel1","badlabel2","badlabel3"]   
-!["badlabel1","badlabel2","badlabel3"].all(x, x in object.spec.template.metadata.labels)
+    // scenario 1 - only label key is used
+    // value = ["badlabel1","badlabel2","badlabel3"]   
+    !["badlabel1","badlabel2","badlabel3"].all(x, x in object.spec.template.metadata.labels)
 
-// scenario 2a - label key and value
-// value = ["badlabel1=badvalue1"]  
-!("badlabel1" in object.spec.template.metadata.labels && 
-object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
+    // scenario 2a - label key and value
+    // value = ["badlabel1=badvalue1"]  
+    !("badlabel1" in object.spec.template.metadata.labels && 
+    object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
 
-// scenario 2b - label key and value
-// if we have multiple value
-// value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]  
-!(("badlabel1" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
-    &&
-("badlabel2" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel2"]=="badvalue2"))
+    // scenario 2b - label key and value
+    // if we have multiple value
+    // value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]  
+    !(("badlabel1" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
+        &&
+    ("badlabel2" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel2"]=="badvalue2"))
 
-// scenario 3a - label key and regex value
-// value = ["badlabel1=bad*"]  
-!("badlabel1" in object.spec.template.metadata.labels && 
-object.spec.template.metadata.labels["badlabel1"].matches("^bad.+"))
+    // scenario 3a - label key and regex value
+    // value = ["badlabel1=bad*"]  
+    !("badlabel1" in object.spec.template.metadata.labels && 
+    object.spec.template.metadata.labels["badlabel1"].matches("^bad.+"))
 
-// TODO:
-// scenario 3b - multiple label key and regex value example
-// value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"]  
+    // TODO:
+    // scenario 3b - multiple label key and regex value example
+    // value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"]  
 
-// TODO:
-// scenario 4  - mixed type of values
-// values = ["badlabel1", "badlabel2=badvalue2"]
+    // TODO:
+    // scenario 4  - mixed type of values
+    // values = ["badlabel1", "badlabel2=badvalue2"]
 
 
-// Some regex notes
-^bad* matches any string starting with "bad" and optionally followed by "d"s (including the case where "bad" is followed by no "d"s at all, as in "ba").
+    // Some regex notes
+    ^bad* matches any string starting with "bad" and optionally followed by "d"s (including the case where "bad" is followed by no "d"s at all, as in "ba").
 
-^bad.+ ensures that the string starts with "bad" and is followed by at least one character (not just "bad" itself).
-```
+    ^bad.+ ensures that the string starts with "bad" and is followed by at least one character (not just "bad" itself).
+    ```
 
-</details>
+    </details>
 
 <details><summary>operator = containsAny</summary>
 
