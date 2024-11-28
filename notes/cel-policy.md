@@ -74,56 +74,54 @@ object:
 
 ### Label criteria
 
-🚧 TODO: need to do multiple values in scenario 2 and scenario 3.
-
 * 🔴 operator = containsAll
-    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
-    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
-    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
 * 🔴 operator = containsAny
-    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
-    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
-    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
 * 🔴 operator = notContainsAny
-    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
-    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
-    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
 * 🔴 operator = containsOtherThan
-    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
-    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
-    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
+
+For each operator, the following scenarios should be considered.
+
+* scenario 1 -  label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
+* scenario 2a - label key and value, example: value = ["badlabel1=badvalue1"]  
+* scenario 2b - multiple label key and value, example: value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]  
+* scenario 3a - label key and regex value, example: value = ["badlabel1=^bad*"]  
+* scenario 3b - multiple label key and regex value example: value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"]  
+* scenario 4  - mixed type of values = ["badlabel1", "badlabel2=badvalue2"]  // TODO: check NeuVector first to see if it works.
 
 <details><summary>operator = containsAll</summary>
 
 ```
 //"costcenter" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["costcenter"].matches("^aaa")
 
-// 1️⃣ scenario 1 - only label key is used
-// operator = containsAll
+// scenario 1 - only label key is used
 // value = ["badlabel1","badlabel2","badlabel3"]   
-// need to negate the final value, 
 !["badlabel1","badlabel2","badlabel3"].all(x, x in object.spec.template.metadata.labels)
 
-// 2️⃣ scenario 2 - label key and value
-// neuvector criteria : labels (env and annotation should be also okay)
-// operator = containsAll
+// scenario 2a - label key and value
 // value = ["badlabel1=badvalue1"]  
-// need to negate the final value, 
 !("badlabel1" in object.spec.template.metadata.labels && 
 object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
 
+// scenario 2b - label key and value
 // if we have multiple value
 // value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]  
 !(("badlabel1" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
     &&
 ("badlabel2" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel2"]=="badvalue2"))
 
-// 3️⃣ scenario 3 - label key and regex value
-// operator = containsAll
+// scenario 3a - label key and regex value
 // value = ["badlabel1=bad*"]  
-//"costcenter" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["costcenter"].matches("^aaa")
 !("badlabel1" in object.spec.template.metadata.labels && 
 object.spec.template.metadata.labels["badlabel1"].matches("^bad.+"))
+
+// TODO:
+// scenario 3b - multiple label key and regex value example
+// value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"]  
+
+// TODO:
+// scenario 4  - mixed type of values
+// values = ["badlabel1", "badlabel2=badvalue2"]
+
 
 // Some regex notes
 ^bad* matches any string starting with "bad" and optionally followed by "d"s (including the case where "bad" is followed by no "d"s at all, as in "ba").
