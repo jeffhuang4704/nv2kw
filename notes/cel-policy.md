@@ -1,5 +1,10 @@
 ## cel policy notes
 
+## resources
+-- [cel language def](https://github.com/google/cel-spec/blob/v0.18.0/doc/langdef.md#macros)
+-- [CEL playground](https://playcel.undistro.io/)
+
+## notes
 We can leverage the Kubewarden CEL policy to implement the following NeuVector criteria.
 - labels
 - annotation
@@ -38,7 +43,7 @@ For each, we need to consider the following scenarios, using labels as an exampl
 🚧 TODO: need to mention the object path each resource wll inspect. For example label it might inspect two different places.
 Also the environment variables, it might inspect both image and runtime..
 
-[CEL playground](https://playcel.undistro.io/)
+
 
 <details><summary>Example Input (use this in CEL playground)</summary>
 
