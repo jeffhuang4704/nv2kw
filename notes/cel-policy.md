@@ -76,10 +76,10 @@ object:
 
 ### Label criteria
 
-🔴 operator = containsAll
-1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
-2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
-3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
+* 🔴 operator = containsAll
+    * 1️⃣ scenario 1 - only label key is used, example: value = ["badlabel1","badlabel2","badlabel3"]   
+    * 2️⃣ scenario 2 - label key and value, example: value = ["badlabel1=badvalue1"]  
+    * 3️⃣ scenario 3 - label key and regex value, example: value = ["badlabel1=^bad*"]  
 
 <details><summary>operator = containsAll</summary>
 
