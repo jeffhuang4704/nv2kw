@@ -166,6 +166,66 @@ TODO:
 <details><summary>operator = containsOtherThan</summary>
 
 ```
-TODO:
+// scenario 1 - only label key is used
+// value = ["app", "good1","good2","good3"]  
+//         only these four keys can be used in the resource, other keys will be denied 
+!object.spec.template.metadata.labels.exists(item, !(item in ["app", "good1","good2","good3"]))
+
+
 ```
 </details>
+
+## TODO -- need to try, 
+
+```
+# operator=containsOtherThan, 
+# value=key and value
+
+apiVersion: admissionregistration.k8s.io/v1alpha1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: validate-annotations
+spec:
+  paramKind:
+    apiVersion: v1
+    kind: ConfigMap
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  validations:
+  - expression: 'request.object.metadata.annotations.all(key, key in whitelist && request.object.metadata.annotations[key] == whitelist[key])'
+    variables:
+    - name: whitelist
+      value: '{"key1": "value1", "key2": "value2"}'
+
+```
+
+
+```
+# operator=containsOtherThan, 
+# value=regex
+
+apiVersion: admissionregistration.k8s.io/v1alpha1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: validate-annotations
+spec:
+  paramKind:
+    apiVersion: v1
+    kind: ConfigMap
+  matchConstraints:
+    resourceRules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  validations:
+  - expression: 'request.object.metadata.annotations.all(key, key in whitelist && request.object.metadata.annotations[key].matches(whitelist[key]))'
+    variables:
+    - name: whitelist
+      value: '{"key1": "^[a-zA-Z0-9_-]+$", "key2": "^\\d{4}-\\d{2}-\\d{2}$"}'
+
+```
