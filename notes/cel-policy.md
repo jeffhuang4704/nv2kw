@@ -92,7 +92,7 @@ For each operator, the following scenarios should be considered.
 
 The following experiments were conducted in the CEL playground. We should later try them in Kubewarden.
 
-    <details><summary>operator = containsAll</summary>
+<details><summary>operator = containsAll</summary>
 
     ```
     //"costcenter" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["costcenter"].matches("^aaa")
@@ -133,25 +133,25 @@ The following experiments were conducted in the CEL playground. We should later 
     ^bad.+ ensures that the string starts with "bad" and is followed by at least one character (not just "bad" itself).
     ```
 
-    </details>
+</details>
 
-    <details><summary>operator = containsAny</summary>
+<details><summary>operator = containsAny</summary>
 
-    ```
-    TODO:
-    ```
-    </details>
+```
+TODO:
+```
+</details>
 
-    <details><summary>operator = notContainsAny</summary>
+<details><summary>operator = notContainsAny</summary>
 
-    ```
-    TODO:
-    ```
-    </details>
+```
+TODO:
+```
+</details>
 
-    <details><summary>operator = containsOtherThan</summary>
+<details><summary>operator = containsOtherThan</summary>
 
-    ```
-    TODO:
-    ```
-    </details>
+```
+TODO:
+```
+</details>
