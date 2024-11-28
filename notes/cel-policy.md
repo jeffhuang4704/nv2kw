@@ -138,7 +138,21 @@ The following experiments were conducted in the CEL playground. We should later 
 <details><summary>operator = containsAny</summary>
 
 ```
-TODO:
+// scenario 1 - only label key is used
+// value = ["badlabel1","badlabel2","badlabel3"]   
+!["badlabel1","badlabel2","badlabel3"].exists(x, x in object.spec.template.metadata.labels)
+
+// scenario 2a - label key and value
+// value = ["badlabel1=badvalue1"]  
+!("badlabel1" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
+
+// scenario 2b - label key and value
+// if we have multiple value
+// value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]  
+// (same as containsAll, but uses || )
+!(("badlabel1" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel1"]=="badvalue1")
+    ||
+("badlabel2" in object.spec.template.metadata.labels && object.spec.template.metadata.labels["badlabel2"]=="badvalue2"))
 ```
 </details>
 
