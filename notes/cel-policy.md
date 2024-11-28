@@ -1,6 +1,8 @@
 ## cel policy notes
 
-We can apply the CEL policy to meet the following NeuVector criteria.
+[CEL playground](https://playcel.undistro.io/)
+
+We can leverage the Kubewarden CEL policy to implement the following NeuVector criteria.
 - labels
 - annotation
 - environment variables
@@ -8,10 +10,20 @@ We can apply the CEL policy to meet the following NeuVector criteria.
 The following operators are used in these criteria.
 
 ```
-    "containsAll"
-    "containsAny"
-    "notContainsAny"
-    "containsOtherThan"
+"containsAll"
+    The resource will be denied if it uses ALL of the defined values.
+    The resource will not be denied if it uses some or none of the defined values.
+
+"containsAny"
+    The resource will be denied if it uses any of the defined values.
+
+"notContainsAny"
+    It is the negation of "containsAny".
+    The resource will be denied if it does not use any of the defined values.
+    In other words, the resource must use at least one of the defined values to be allowed.
+
+"containsOtherThan"
+
 ```
 
 The following are some experiments attempting to implement these criteria and their operators. 
