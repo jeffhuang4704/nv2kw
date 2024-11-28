@@ -82,11 +82,11 @@ object:
 For each operator, the following scenarios should be considered.
 
 * scenario 1 -  label key is used, example: `value = ["badlabel1","badlabel2","badlabel3"]`
-* scenario 2a - label key and value, example: value = ["badlabel1=badvalue1"]  
-* scenario 2b - multiple label key and value, example: value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]  
-* scenario 3a - label key and regex value, example: value = ["badlabel1=^bad*"]  
-* scenario 3b - multiple label key and regex value example: value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"]  
-* scenario 4  - mixed type of values = ["badlabel1", "badlabel2=badvalue2"]  // TODO: check NeuVector first to see if it works.
+* scenario 2a - label key and value, example: `value = ["badlabel1=badvalue1"]`  
+* scenario 2b - multiple label key and value, example: `value = ["badlabel1=badvalue1", "badlabel2=badvalue2"]`  
+* scenario 3a - label key and regex value, example: `value = ["badlabel1=^bad*"]`  
+* scenario 3b - multiple label key and regex value example: `value = ["badlabel1=^bad*", "badlabel2=^anotherbad*"] ` 
+* scenario 4  - mixed type of values = `["badlabel1", "badlabel2=badvalue2"]`  // TODO: check NeuVector first to see if it works.
 
 <details><summary>operator = containsAll</summary>
 
