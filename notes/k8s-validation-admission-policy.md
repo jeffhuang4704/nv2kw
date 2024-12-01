@@ -1,25 +1,25 @@
-## k8s Validating Admission Policy
+# k8s Validating Admission Policy
 
-### resources
--- [k8s doc](https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/)
+## resources
+- [k8s doc](https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/)
 
-### how it works
+## how it works
 
-What Resources Make a Policy
+*What Resources Make a Policy*
 A policy is generally made up of three resources:
 
--- The `ValidatingAdmissionPolicy` describes the abstract logic of a policy (think: "this policy makes sure a particular label is set to a particular value").
+- The `ValidatingAdmissionPolicy` describes the abstract logic of a policy (think: "this policy makes sure a particular label is set to a particular value").
 
--- A `ValidatingAdmissionPolicyBinding` links the above resources together and provides scoping. If you only want to require an owner label to be set for Pods, the binding is where you would specify this restriction.
+- A `ValidatingAdmissionPolicyBinding` links the above resources together and provides scoping. If you only want to require an owner label to be set for Pods, the binding is where you would specify this restriction.
 
--- A parameter resource provides information to a `ValidatingAdmissionPolicy` to make it a concrete statement (think "the owner label must be set to something that ends in .company.com"). A native type such as ConfigMap or a CRD defines the schema of a parameter resource. `ValidatingAdmissionPolicy` objects specify what Kind they are expecting for their parameter resource.
+- A parameter resource provides information to a `ValidatingAdmissionPolicy` to make it a concrete statement (think "the owner label must be set to something that ends in .company.com"). A native type such as ConfigMap or a CRD defines the schema of a parameter resource. `ValidatingAdmissionPolicy` objects specify what Kind they are expecting for their parameter resource.
 
 At least a `ValidatingAdmissionPolicy` and a corresponding `ValidatingAdmissionPolicyBinding` must be defined for a policy to have an effect.
 
 If a `ValidatingAdmissionPolicy` does not need to be configured via parameters, simply leave spec.paramKind in `ValidatingAdmissionPolicy` not specified.
 
 
-### minikube
+## minikube
 
 ```
 # need to start minikube with the enable flag
@@ -33,12 +33,12 @@ I1201 19:20:03.675500       1 plugins.go:160] Loaded 13 validating admission con
 I1201 19:20:08.019776       1 shared_informer.go:320] Caches are synced for *generic.policySource[*k8s.io/api/admissionregistration/v1.ValidatingAdmissionPolicy,*k8s.io/api/admissionregistration/v1.ValidatingAdmissionPolicyBinding,k8s.io/apiserver/pkg/admission/plugin/policy/validating.Validator]
 ```
 
-### testing
+## testing
 
 refer to the [k8s doc](https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/)
 We need two resources `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding`
 
-Policy 
+*Policy *
 
 ```
 apiVersion: admissionregistration.k8s.io/v1
@@ -57,7 +57,7 @@ spec:
     - expression: "object.spec.replicas <= 5"
 ```
 
-Binding
+*Binding*
 
 ```
 apiVersion: admissionregistration.k8s.io/v1
@@ -79,7 +79,7 @@ We need to add the matched lael `environment=test`
 The `namespaceSelector` in your `ValidatingAdmissionPolicyBinding` requires namespaces with the label environment: test.
 If the test namespace does not have this label, the policy won't apply to resources in the test namespace.
 
-Add label the namespace: 
+*Add label the namespace: *
 
 ```
 # add label to the namespace
@@ -98,7 +98,7 @@ metadata:
 
 ```
 
-Resource
+*Resource*
 ```
 neuvector@ubuntu2204-E:~/validating_admission_policy$ cat deploy1.yaml
 apiVersion: apps/v1
@@ -128,7 +128,7 @@ spec:
 status: {}
 ```
 
-Deployment denied
+*Deployment denied*
 ```
 neuvector@ubuntu2204-E:~/validating_admission_policy$ kubectl apply -f deploy1.yaml
 The deployments "my-dep" is invalid: : ValidatingAdmissionPolicy 'demo-policy.example.com' with binding 'demo-binding-test.example.com' denied request: failed expression: object.spec.replicas <= 5
