@@ -198,6 +198,8 @@ The deployments "my-dep" is invalid: : ValidatingAdmissionPolicy 'demo-policy.ex
 
 ## testing 2 - multiple expressions
 
+<details><summary>YAML</summary>
+
 ```
 # policy
 neuvector@ubuntu2204-E:~/validating_admission_policy/2_multi_expressions$ cat policy2.yaml
@@ -214,9 +216,9 @@ spec:
       operations:  ["CREATE", "UPDATE"]
       resources:   ["deployments"]
   validations:
-    - expression: "object.spec.replicas <= 5"
+    - expression: "object.spec.replicas <= 5"                    🔴
       message: "The number of replicas must not exceed 5."
-    - expression: "object.spec.template.spec.containers.all(c, !c.image.endsWith(':latest'))"
+    - expression: "object.spec.template.spec.containers.all(c, !c.image.endsWith(':latest'))"  🔴
       message: "Container images must not use the 'latest' tag."
 
 # binding
@@ -263,3 +265,5 @@ spec:
 neuvector@ubuntu2204-E:~/validating_admission_policy/2_multi_expressions$ kubectl apply -f deploy2.yaml
 The deployments "prod-deployment" is invalid: : ValidatingAdmissionPolicy 'demo-policy.example.com' with binding 'demo-binding-test.example.com' denied request: Container images must not use the 'latest' tag.
 ```
+
+</details>
