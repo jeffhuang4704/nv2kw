@@ -76,6 +76,66 @@ spec:
 
 ```
 
+<details><summary>Get resource</summary>
+
+```
+neuvector@ubuntu2204-E:~/validating_admission_policy$ kubectl get ValidatingAdmissionPolicy
+NAME                      VALIDATIONS   PARAMKIND   AGE
+demo-policy.example.com   1             <unset>     111m
+
+neuvector@ubuntu2204-E:~/validating_admission_policy$ kubectl get ValidatingAdmissionPolicyBinding
+NAME                            POLICYNAME                PARAMREF   AGE
+demo-binding-test.example.com   demo-policy.example.com   <unset>    111m
+
+neuvector@ubuntu2204-E:~/validating_admission_policy$ kubectl get ValidatingAdmissionPolicy demo-policy.example.com -oyaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: demo-policy.example.com
+  resourceVersion: "603"
+  uid: aaf05774-6191-4fca-a78c-aca19f5d981e
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    matchPolicy: Equivalent
+    namespaceSelector: {}
+    objectSelector: {}
+    resourceRules:
+    - apiGroups:
+      - apps
+      apiVersions:
+      - v1
+      operations:
+      - CREATE
+      - UPDATE
+      resources:
+      - deployments
+      scope: '*'
+  validations:
+  - expression: object.spec.replicas <= 5
+status:
+  observedGeneration: 1
+  typeChecking: {}
+
+
+neuvector@ubuntu2204-E:~/validating_admission_policy$ kubectl get ValidatingAdmissionPolicyBinding demo-binding-test.example.com -oyaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: demo-binding-test.example.com
+spec:
+  matchResources:
+    matchPolicy: Equivalent
+    namespaceSelector:
+      matchLabels:
+        environment: test
+    objectSelector: {}
+  policyName: demo-policy.example.com
+  validationActions:
+  - Deny
+```
+</details>
+
 🔴🔴🔴 Make sure your testing environment has the matched criteria (matched label `environment=test`)
 
 The `namespaceSelector` in your `ValidatingAdmissionPolicyBinding` requires namespaces with the label `environment: test`.
