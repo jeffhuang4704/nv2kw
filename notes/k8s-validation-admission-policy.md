@@ -36,9 +36,9 @@ I1201 19:20:03.675500       1 plugins.go:160] Loaded 13 validating admission con
 I1201 19:20:08.019776       1 shared_informer.go:320] Caches are synced for *generic.policySource[*k8s.io/api/admissionregistration/v1.ValidatingAdmissionPolicy,*k8s.io/api/admissionregistration/v1.ValidatingAdmissionPolicyBinding,k8s.io/apiserver/pkg/admission/plugin/policy/validating.Validator]
 ```
 
-## testing
+## testing 1 - single expression
 
-We need two `Policy` and `Binding` resources - `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding`
+We need `Policy` and `Binding` resources - `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding`
 
 *Policy*
 
@@ -194,4 +194,72 @@ status: {}
 ```
 neuvector@ubuntu2204-E:~/validating_admission_policy$ kubectl apply -f deploy1.yaml
 The deployments "my-dep" is invalid: : ValidatingAdmissionPolicy 'demo-policy.example.com' with binding 'demo-binding-test.example.com' denied request: failed expression: object.spec.replicas <= 5
+```
+
+## testing 2 - multiple expressions
+
+```
+# policy
+neuvector@ubuntu2204-E:~/validating_admission_policy/2_multi_expressions$ cat policy2.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo-policy.example.com"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments"]
+  validations:
+    - expression: "object.spec.replicas <= 5"
+      message: "The number of replicas must not exceed 5."
+    - expression: "object.spec.template.spec.containers.all(c, !c.image.endsWith(':latest'))"
+      message: "Container images must not use the 'latest' tag."
+
+# binding
+neuvector@ubuntu2204-E:~/validating_admission_policy/2_multi_expressions$ cat policy2_binding.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: "demo-binding-test.example.com"
+spec:
+  policyName: "demo-policy.example.com"
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        environment: test
+
+# resource
+neuvector@ubuntu2204-E:~/validating_admission_policy/2_multi_expressions$ cat deploy2.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prod-deployment
+  labels:
+    env: prod
+  namespace: test
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        resources:
+          requests:
+            cpu: "0.5"  # CPU requests are not in millicores
+
+# deployment denied
+neuvector@ubuntu2204-E:~/validating_admission_policy/2_multi_expressions$ kubectl apply -f deploy2.yaml
+The deployments "prod-deployment" is invalid: : ValidatingAdmissionPolicy 'demo-policy.example.com' with binding 'demo-binding-test.example.com' denied request: Container images must not use the 'latest' tag.
 ```
