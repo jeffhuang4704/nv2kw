@@ -5,7 +5,10 @@
 
 ## how it works
 
-*What Resources Make a Policy*
+(quote from k8s doc)
+
+*What Resources Make a Policy*  
+
 A policy is generally made up of three resources:
 
 - The `ValidatingAdmissionPolicy` describes the abstract logic of a policy (think: "this policy makes sure a particular label is set to a particular value").
@@ -19,10 +22,10 @@ At least a `ValidatingAdmissionPolicy` and a corresponding `ValidatingAdmissionP
 If a `ValidatingAdmissionPolicy` does not need to be configured via parameters, simply leave spec.paramKind in `ValidatingAdmissionPolicy` not specified.
 
 
-## minikube
+## start minikube with feature enabled
 
 ```
-# need to start minikube with the enable flag
+# start minikube with the enable flag
 minikube start --feature-gates=ValidatingAdmissionPolicy=true
 
 # verify
@@ -35,8 +38,7 @@ I1201 19:20:08.019776       1 shared_informer.go:320] Caches are synced for *gen
 
 ## testing
 
-refer to the [k8s doc](https://kubernetes.io/docs/reference/access-authn-authz/validating-admission-policy/)
-We need two resources `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding`
+We need two `Policy` and `Binding` resources - `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding`
 
 *Policy *
 
@@ -74,9 +76,9 @@ spec:
 
 ```
 
-We need to add the matched lael `environment=test`
+🔴🔴🔴 Make sure your testing environment has the matched criteria (matched label `environment=test`)
 
-The `namespaceSelector` in your `ValidatingAdmissionPolicyBinding` requires namespaces with the label environment: test.
+The `namespaceSelector` in your `ValidatingAdmissionPolicyBinding` requires namespaces with the label `environment: test`.
 If the test namespace does not have this label, the policy won't apply to resources in the test namespace.
 
 *Add label the namespace: *
