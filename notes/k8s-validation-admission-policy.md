@@ -42,6 +42,8 @@ We need `Policy` and `Binding` resources - `ValidatingAdmissionPolicy` and `Vali
 
 *Policy*
 
+<details><summary>YAML</summary>
+
 ```
 apiVersion: admissionregistration.k8s.io/v1
 kind: ValidatingAdmissionPolicy
@@ -58,8 +60,11 @@ spec:
   validations:
     - expression: "object.spec.replicas <= 5"
 ```
+</details>
 
 *Binding*
+
+<details><summary>YAML</summary>
 
 ```
 apiVersion: admissionregistration.k8s.io/v1
@@ -75,6 +80,7 @@ spec:
         environment: test     👈
 
 ```
+</details>
 
 <details><summary>Get resource</summary>
 
@@ -161,6 +167,9 @@ metadata:
 ```
 
 *Resource*
+
+<details><summary>YAML</summary>
+
 ```
 neuvector@ubuntu2204-E:~/validating_admission_policy$ cat deploy1.yaml
 apiVersion: apps/v1
@@ -189,6 +198,7 @@ spec:
         resources: {}
 status: {}
 ```
+</details>
 
 *Deployment denied*
 ```
