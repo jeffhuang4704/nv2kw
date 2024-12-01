@@ -40,7 +40,7 @@ I1201 19:20:08.019776       1 shared_informer.go:320] Caches are synced for *gen
 
 We need two `Policy` and `Binding` resources - `ValidatingAdmissionPolicy` and `ValidatingAdmissionPolicyBinding`
 
-*Policy *
+*Policy*
 
 ```
 apiVersion: admissionregistration.k8s.io/v1
@@ -72,7 +72,7 @@ spec:
   matchResources:
     namespaceSelector:
       matchLabels:
-        environment: test
+        environment: test     👈
 
 ```
 
@@ -81,7 +81,7 @@ spec:
 The `namespaceSelector` in your `ValidatingAdmissionPolicyBinding` requires namespaces with the label `environment: test`.
 If the test namespace does not have this label, the policy won't apply to resources in the test namespace.
 
-*Add label the namespace: *
+*Add label the namespace*
 
 ```
 # add label to the namespace
