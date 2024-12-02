@@ -359,3 +359,61 @@ The deployments "prod-deployment" is invalid: : ValidatingAdmissionPolicy 'demo-
 ```
 
 </details>
+
+## testing 4 - resource limit check
+
+<details><summary>YAML</summary>
+
+```
+# policy
+neuvector@ubuntu2204-E:~/validating_admission_policy/5_resource_limit$ cat policy5.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo-policy.example.com"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments"]
+  validations:
+    - expression: >
+        ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'].all(kind, object.kind != kind) ||
+        object.spec.template.spec.containers.all(container,
+          (has(container.resources) &&
+           has(container.resources.requests) &&
+           has(container.resources.requests.memory) &&
+           100 * 1024 * 1024 <= int(container.resources.requests.memory.replace("Mi", "").replace("Gi", "000")) * 1024 * 1024 &&
+           200 * 1024 * 1024 >= int(container.resources.requests.memory.replace("Mi", "").replace("Gi", "000")) * 1024 * 1024) &&
+          (has(container.resources.limits) &&
+           has(container.resources.limits.memory) &&
+           100 * 1024 * 1024 <= int(container.resources.limits.memory.replace("Mi", "").replace("Gi", "000")) * 1024 * 1024 &&
+           200 * 1024 * 1024 >= int(container.resources.limits.memory.replace("Mi", "").replace("Gi", "000")) * 1024 * 1024)
+        )
+      message: "Workloads contain containers with memory limits or requests not set, or they are not in the specified range (100Mi to 200Mi)."
+
+
+# binding
+neuvector@ubuntu2204-E:~/validating_admission_policy/5_resource_limit$ cat policy5_binding.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicyBinding
+metadata:
+  name: "demo-binding-test.example.com"
+spec:
+  policyName: "demo-policy.example.com"
+  validationActions: [Deny]
+  matchResources:
+    namespaceSelector:
+      matchLabels:
+        environment: test
+
+
+# deployment denied
+neuvector@ubuntu2204-E:~/validating_admission_policy/5_resource_limit$ kubectl apply -f deploy5.yaml
+The deployments "prod-deployment" is invalid: : ValidatingAdmissionPolicy 'demo-policy.example.com' with binding 'demo-binding-test.example.com' denied request: Workloads contain containers with memory limits or requests not set, or they are not in the specified range (100Mi to 200Mi).
+```
+
+</details>
