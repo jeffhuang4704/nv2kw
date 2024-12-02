@@ -362,7 +362,8 @@ The deployments "prod-deployment" is invalid: : ValidatingAdmissionPolicy 'demo-
 
 ## testing 4 - resource limit check
 
-🔴 TODO: Need to consider the Memory resource units, see the [doc](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+🔴 TODO: Need to consider the Memory resource units, see the [k8s doc](https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/)
+
 Also check [Kubewarden's Container resources policy](https://github.com/kubewarden/container-resources-policy)
 
 <details><summary>YAML</summary>
