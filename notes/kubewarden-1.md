@@ -5,6 +5,10 @@
 ```
 🟢 Start a playground  (using k3s-bare is enough)
 labctl playground start k3s-bare
+labctl ssh {playground-id}
+
+🟢 clone project
+git clone https://github.com/jeffhuang4704/nv2kw.git
 
 1️⃣ create namespace kubewarden
 
