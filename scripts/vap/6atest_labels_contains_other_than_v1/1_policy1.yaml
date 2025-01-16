@@ -1,0 +1,32 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: blacklist
+    expression: '{"prohibit1": "value1*", "prohibit2": "value2*", "prohibit4": ""}'
+  - name: dataset1
+    expression: 'has(object.metadata.labels) ? object.metadata.labels : []'
+  - name: dataset2
+    expression: 'has(object.spec.template.metadata.labels) ? object.spec.template.metadata.labels : []'
+  validations:
+    - expression: '
+      !variables.dataset1.exists(x, !(x in ["app","whitelist1","whitelist2","whitelist3"]))
+    '
+      message: '❌ operator: contains_other_than, labels can only use predefined key/value'

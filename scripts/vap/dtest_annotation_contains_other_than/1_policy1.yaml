@@ -1,0 +1,22 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo2"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+  variables:
+  - name: allowlist
+    expression: '{"good1": "value1*", "good2": "value2*", "good3": ""}'
+  - name: dataset
+    expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+  validations:
+    - expression: '
+      true || 
+    !object.metadata.annotations.exists(x, !(x in ["app","whitelist1","whitelist2","whitelist3"]))'
+      message: '❌ operator: contains_other_than, annotations can only use predefined key/value'

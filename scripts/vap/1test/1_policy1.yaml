@@ -1,0 +1,38 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: k8sRecommendedLabels
+    expression: '["key1","key2"]'
+  validations:
+    - expression: >
+        ['Deployment','ReplicaSet','DaemonSet','StatefulSet','Job'].all(kind, object.kind != kind) ||
+        (
+          has(object.metadata.labels) &&
+          !(object.metadata.labels.all(label, variables.k8sRecommendedLabels.all(
+            labelInList, labelInList != label
+          ))) &&
+          has(object.spec.template.metadata) &&
+          has(object.spec.template.metadata.labels) &&
+          !(object.spec.template.metadata.labels.all(label, variables.k8sRecommendedLabels.all(
+            labelInList, labelInList != label
+          )))
+        )
+      message: '❌ resource must have at least one recommended labels ["key1", "key2"] in both metadata.labels and spec.template.metadata.labels'

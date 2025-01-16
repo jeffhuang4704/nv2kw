@@ -1,0 +1,28 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: blacklist
+    expression: '{"bad1": "value1*", "bad2": "value2*", "bad3": ""}'
+  - name: dataset
+    expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+  validations:
+    - expression: '!variables.blacklist.all(key, key in variables.dataset && variables.dataset[key].matches(variables.blacklist[key]))'
+      message: '❌ operator: contains_all, annotations cannot use all blacklist key/value'

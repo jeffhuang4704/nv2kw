@@ -1,0 +1,28 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: mustlist
+    expression: '{"must1": "value1*", "must2": "value2*", "must3": ""}'
+  - name: dataset
+    expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+  validations:
+    - expression: 'variables.dataset.exists(key, key in variables.mustlist && variables.dataset[key].matches(variables.mustlist[key]))'
+      message: '❌ operator: not_contains_any, annotations does not use any predefined key/value'

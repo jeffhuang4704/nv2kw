@@ -1,0 +1,32 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: blacklist
+    expression: '{"bad1": "value1*", "prohibit2": "value2*", "prohibit4": ""}'
+  validations:
+    - expression: "
+      !object.spec.template.spec.containers.exists(container,
+        has(container.env) && 
+        container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && variables.blacklist[check].matches(envVar.value) )
+        )
+      )
+      "
+      message: '❌ operator: (need add initContainers) contains_any, environment variables cannot use any blacklist key/value'
