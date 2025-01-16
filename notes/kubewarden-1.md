@@ -10,6 +10,15 @@ labctl ssh {playground-id}
 🟢 clone project
 git clone https://github.com/jeffhuang4704/nv2kw.git
 
+🟢 setup via script
+~/nv2kw/scripts$ ./setup_kubewarden.sh
+
+```
+
+Detail steps:
+
+```
+
 1️⃣ create namespace kubewarden
 
 kubectl create ns kubewarden
