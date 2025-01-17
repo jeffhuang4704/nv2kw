@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-dep
+    prohibit1: value1
+    prohibit2: value2
+  name: my-dep
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: my-dep
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: my-dep
+        prohibit4: any
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        resources: {}
+status: {}

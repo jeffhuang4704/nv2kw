@@ -1,0 +1,23 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: celtest1
+spec:
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
+  settings:
+    variables:
+      - name: "replicas"
+        expression: "object.spec.replicas"
+    validations:
+      - expression: "variables.replicas <= 15"
+        message: "The number of replicas must be less than or equal to 15"
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments"]
+  mutating: false
+  backgroundAudit: false

@@ -48,6 +48,8 @@ policyservers                   ps
 
 ## 🅱️ Test
 
+[Scripts can be found at](../scripts/kw/2test/)
+
 1️⃣ define a ClusterAdmissionPolicy
 
 ```
