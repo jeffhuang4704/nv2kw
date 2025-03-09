@@ -1,0 +1,155 @@
+{
+  "rules": [
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Allow deployments in system namespaces.",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "containsAny",
+          "value": "kube-system,kube-public,istio-system"
+        }
+      ],
+      "critical": true,
+      "disable": false,
+      "id": 1,
+      "rule_mode": "",
+      "rule_type": "exception"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "Allow deployments in NeuVector namespace",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "containsAny",
+          "value": "neuvector"
+        }
+      ],
+      "critical": true,
+      "disable": false,
+      "id": 2,
+      "rule_mode": "",
+      "rule_type": "exception"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-annotation",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "annotations",
+          "op": "containsAny",
+          "path": "annotations",
+          "value": "bad1,bad2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1000,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-environment-variable",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "envVars",
+          "op": "containsAny",
+          "path": "envVars",
+          "value": "badenv1,badenv2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1001,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-label-a",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "labels",
+          "op": "containsAny",
+          "path": "labels",
+          "value": "badlabel1,badlabel2"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1002,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-label-b",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "labels",
+          "op": "containsAll",
+          "path": "labels",
+          "value": "test1,test2,test3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1003,
+      "rule_mode": "",
+      "rule_type": "deny"
+    },
+    {
+      "category": "Kubernetes",
+      "cfg_type": "user_created",
+      "comment": "test-mix",
+      "containers": [
+        "containers"
+      ],
+      "criteria": [
+        {
+          "name": "namespace",
+          "op": "containsAny",
+          "path": "namespace",
+          "value": "ns1,ns2,ns3"
+        },
+        {
+          "name": "labels",
+          "op": "containsAny",
+          "path": "labels",
+          "value": "badlabel1,badlabel2,badlabel3"
+        }
+      ],
+      "critical": false,
+      "disable": false,
+      "id": 1004,
+      "rule_mode": "",
+      "rule_type": "deny"
+    }
+  ]
+}

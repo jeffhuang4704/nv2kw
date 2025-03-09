@@ -1,0 +1,4 @@
+neuvector@ubuntu2204-A:~/kw$ cat 1_get_all_admissions.sh
+curl -k -H "Content-Type: application/json" -H "X-Auth-Apikey: $APIKEY_CLUSTER_A" "https://$K8sNodeIP:$ControllerSvcPORT/v1/admission/rules"
+
+neuvector@ubuntu2204-A:~/kw$ ./1_get_all_admissions.sh | jq > rule1.json
