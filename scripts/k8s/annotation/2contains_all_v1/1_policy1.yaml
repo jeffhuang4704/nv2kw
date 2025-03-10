@@ -1,0 +1,43 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo-contains-all-v1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: blacklist
+    expression: '{"bad1": "value1*", "bad2": "value2*"}'
+  - name: dataset1a
+    expression: 'has(object.metadata.annotations) ? object.metadata.annotations : []'
+  - name: dataset1b
+    expression: 'has(object.spec.template.metadata.annotations) ? object.spec.template.metadata.annotations : []'
+  - name: dataset3
+    expression: 'has(object.spec.jobTemplate.metadata.annotations) ? object.spec.jobTemplate.metadata.annotations: []'
+  - name: isType1
+    expression: 'object.kind in ["Pod"] ? true: false'
+  - name: isType2
+    expression: 'object.kind in ["Deployment","ReplicaSet","DaemonSet","StatefulSet","Job"] ? true: false'
+  - name: isType3
+    expression: 'object.kind in ["CronJob"] ? true: false'
+  validations:
+    - expression: '
+        !variables.isType1 ||
+        (
+          !variables.blacklist.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.blacklist[key]))
+        )
+        '
+      message: '❌ operator: pod contains_all, annotations cannot use all blacklist key/value'
