@@ -41,3 +41,22 @@ spec:
         )
         '
       message: '❌ operator: pod contains_all, annotations cannot use all blacklist key/value'
+    - expression: '
+        !variables.isType2 ||
+        (
+          (!variables.blacklist.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.blacklist[key])))
+          &&
+          (!variables.blacklist.all(key, key in variables.dataset1b && variables.dataset1b[key].matches(variables.blacklist[key])))
+        )
+        '
+      message: '❌ operator: deployment contains_all, annotations cannot use all blacklist key/value'
+    - expression: '
+        !variables.isType3 ||
+        (
+          (!variables.blacklist.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.blacklist[key])))
+          &&
+          (!variables.blacklist.all(key, key in variables.dataset3 && variables.dataset3[key].matches(variables.blacklist[key])))
+        )
+        '
+      message: '❌ operator: cronjob contains_all, annotations cannot use all blacklist key/value'
+
