@@ -45,7 +45,7 @@ spec:
         !variables.isType2 ||
         (
           (variables.dataset1a.exists(key, key in variables.userdata && variables.dataset1a[key].matches(variables.userdata[key]))) 
-          &&
+          ||
           (variables.dataset1b.exists(key, key in variables.userdata && variables.dataset1b[key].matches(variables.userdata[key])))
         )
         '
@@ -54,7 +54,7 @@ spec:
         !variables.isType3 ||
         (
           (variables.dataset1a.exists(key, key in variables.userdata && variables.dataset1a[key].matches(variables.userdata[key]))) 
-          &&
+          ||
           (variables.dataset3.exists(key, key in variables.userdata && variables.dataset3[key].matches(variables.userdata[key])))
         )
         '
