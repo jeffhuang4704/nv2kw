@@ -1,0 +1,23 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  namespace: test
+  name: hello-world
+  labels:
+    good1: value1
+spec:
+  schedule: "*/1 * * * *" # Runs every minute
+  jobTemplate:
+    metadata:
+      annotations:
+        bad1: value1
+      labels:
+        good1: value1
+    spec:
+      template:
+        spec:
+          containers:
+          - name: hello-world
+            image: busybox
+            command: ["echo", "Hello, World!"]
+          restartPolicy: OnFailure

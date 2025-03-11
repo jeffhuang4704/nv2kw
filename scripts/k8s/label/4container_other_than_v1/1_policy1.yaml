@@ -1,0 +1,61 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: allowedlist
+    expression: '{"good1": "value1*", "good2": "value2*"}'
+  - name: dataset1a
+    expression: 'has(object.metadata.labels) ? object.metadata.labels : []'
+  - name: dataset1b
+    expression: 'has(object.spec.template.metadata.labels) ? object.spec.template.metadata.labels : []'
+  - name: dataset3
+    expression: 'has(object.spec.jobTemplate.metadata.labels) ? object.spec.jobTemplate.metadata.labels: []'
+  - name: isType1
+    expression: 'object.kind in ["Pod"] ? true: false'
+  - name: isType2
+    expression: 'object.kind in ["Deployment","ReplicaSet","DaemonSet","StatefulSet","Job"] ? true: false'
+  - name: isType3
+    expression: 'object.kind in ["CronJob"] ? true: false'
+  validations:
+    - expression: '
+        !variables.isType1 ||
+        (
+          !variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))
+        )
+        '
+      message: '❌ operator: Labels must use only allowed key/value pairs. (contains other than)'
+    - expression: '
+        !variables.isType2 ||
+        (
+          (!variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))) 
+          &&
+          (!variables.dataset1b.exists(x, !(x in variables.allowedlist && matches(variables.dataset1b[x], variables.allowedlist[x])))) 
+        )
+        '
+      message: '❌ operator: deployment must use allowed key/value pairs. (contains other than)'
+    - expression: '
+        !variables.isType3 ||
+        (
+          (!variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))) 
+          &&
+          (!variables.dataset3.exists(x, !(x in variables.allowedlist && matches(variables.dataset3[x], variables.allowedlist[x])))) 
+        )
+        '
+      message: '❌ operator: cronjob must use allowed key/value pairs. (contains other than)'
