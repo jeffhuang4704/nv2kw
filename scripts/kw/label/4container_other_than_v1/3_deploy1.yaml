@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  annotations:
+    good1: value1
+    bad1: value1
+  labels:
+    app: my-dep
+    good1: value1
+  name: my-dep
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-dep
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      annotations:
+        good2: value1
+      labels:
+        app: my-dep
+        good1: value1
+    spec:
+      containers:
+      - image: nginx
+        name: nginx
+        env:
+        - name: bad1
+          value: value1
+        resources: {}
+status: {}
