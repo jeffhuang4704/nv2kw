@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: my-dep
+    prohibit2: value2
+  name: my-dep
+  namespace: test
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-dep
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: my-dep
+        prohibit4: any
+    spec:
+      initContainers:
+      - name: init-sleep
+        image: busybox
+        command: ["sleep", "10"]
+        env:
+        - name: bad
+          value: value1
+      containers:
+      - image: nginx
+        name: nginx
+        env:
+        - name: bad1
+          value: anything-value1-a
+        resources: {}
+status: {}

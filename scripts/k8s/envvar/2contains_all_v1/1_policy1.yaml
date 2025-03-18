@@ -1,0 +1,54 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: blacklist
+    expression: '{"bad1": "^value1$", "bad2": "^value2$", "bad3": "^value3$"}'
+  - name: hasContainer
+    expression: 'has(object.spec.template.spec.containers) ? true : false'
+  - name: hasInitContainer
+    expression: 'has(object.spec.template.spec.initContainers) ? true : false'
+  - name: hasEphemeralContainer
+    expression: 'has(object.spec.template.spec.ephemeralContainers) ? true : false'
+  validations:
+    - expression: "
+      !variables.hasContainer ||
+      (!object.spec.template.spec.containers.exists(container,
+        has(container.env) && 
+        variables.blacklist.all(check, container.env.exists(envVar, envVar.name==check && envVar.value.matches(variables.blacklist[check])))
+        ))
+      "
+      message: '❌ operator: containers contains_any, environment variables cannot use any blacklist key/value'
+    - expression: "
+      !variables.hasInitContainer ||
+      (!object.spec.template.spec.initContainers.exists(container,
+        has(container.env) && 
+        variables.blacklist.all(check, container.env.exists(envVar, envVar.name==check && envVar.value.matches(variables.blacklist[check])))
+        ))
+      "
+      message: '❌ operator: initContainers contains_any, environment variables cannot use any blacklist key/value'
+    - expression: "
+      !variables.hasEphemeralContainer ||
+      (!object.spec.template.spec.ephemeralContainers.exists(container,
+        has(container.env) && 
+        variables.blacklist.all(check, container.env.exists(envVar, envVar.name==check && envVar.value.matches(variables.blacklist[check])))
+        ))
+      "
+      message: '❌ operator: ephemeralContainers contains_any, environment variables cannot use any blacklist key/value'
