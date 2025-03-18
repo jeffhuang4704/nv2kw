@@ -1,0 +1,59 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: celtest1
+spec:
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
+  settings:
+    variables:
+    - name: blacklist
+      expression: '{"bad1": "^.*value1$", "bad2": "^value2.*$", "bad3": "^value3$", "bad4": "^value.here$", "bad5": "^aaa\\.bbb$"}'
+    - name: hasContainer
+      expression: 'has(object.spec.template.spec.containers) ? true : false'
+    - name: hasInitContainer
+      expression: 'has(object.spec.template.spec.initContainers) ? true : false'
+    - name: hasEphemeralContainer
+      expression: 'has(object.spec.template.spec.ephemeralContainers) ? true : false'
+    validations:
+      - expression: "
+        !variables.hasContainer ||
+        (!object.spec.template.spec.containers.exists(container,
+          has(container.env) && 
+          container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name &&  envVar.value.matches(variables.blacklist[check]) )
+          )))
+        "
+        message: '❌ operator: containers contains_any, environment variables cannot use any blacklist key/value'
+      - expression: "
+        !variables.hasInitContainer ||
+        (!object.spec.template.spec.initContainers.exists(container,
+          has(container.env) && 
+          container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && variables.blacklist[check].matches(envVar.value) )
+          )))
+        "
+        message: '❌ operator: initContainers contains_any, environment variables cannot use any blacklist key/value'
+      - expression: "
+        !variables.hasEphemeralContainer ||
+        (!object.spec.template.spec.ephemeralContainers.exists(container,
+          has(container.env) && 
+          container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && variables.blacklist[check].matches(envVar.value) )
+          )))
+        "
+        message: '❌ operator: ephemeralContainers contains_any, environment variables cannot use any blacklist key/value'
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["cronjobs"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  mutating: false
+  backgroundAudit: false

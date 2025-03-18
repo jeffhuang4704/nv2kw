@@ -32,7 +32,7 @@ spec:
       !variables.hasContainer ||
       (!object.spec.template.spec.containers.exists(container,
         has(container.env) && 
-        container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name &&  envVar.value.matches(variables.blacklist[check]) )
+        container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && envVar.value.matches(variables.blacklist[check]) )
         )))
       "
       message: '❌ operator: containers contains_any, environment variables cannot use any blacklist key/value'
@@ -40,7 +40,7 @@ spec:
       !variables.hasInitContainer ||
       (!object.spec.template.spec.initContainers.exists(container,
         has(container.env) && 
-        container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && variables.blacklist[check].matches(envVar.value) )
+        container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && envVar.value.matches(variables.blacklist[check]) )
         )))
       "
       message: '❌ operator: initContainers contains_any, environment variables cannot use any blacklist key/value'
@@ -48,7 +48,7 @@ spec:
       !variables.hasEphemeralContainer ||
       (!object.spec.template.spec.ephemeralContainers.exists(container,
         has(container.env) && 
-        container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && variables.blacklist[check].matches(envVar.value) )
+        container.env.exists(envVar, variables.blacklist.exists(check, check==envVar.name && envVar.value.matches(variables.blacklist[check]) )
         )))
       "
       message: '❌ operator: ephemeralContainers contains_any, environment variables cannot use any blacklist key/value'
