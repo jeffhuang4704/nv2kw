@@ -1,0 +1,54 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingAdmissionPolicy
+metadata:
+  name: "demo1"
+spec:
+  failurePolicy: Fail
+  matchConstraints:
+    resourceRules:
+    - apiGroups:   [""]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["pods"]
+    - apiGroups:   ["apps"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["deployments","replicasets","daemonsets","statefulsets"]
+    - apiGroups:   ["batch"]
+      apiVersions: ["v1"]
+      operations:  ["CREATE", "UPDATE"]
+      resources:   ["jobs","cronjobs"]
+  variables:
+  - name: userdata
+    expression: '{"good1": "^.*value1$", "good2": "^value2.*$", "good3": "^value3$", "good4": "^value.here$", "good5": "^aaa\\.bbb$"}'
+  - name: hasContainer
+    expression: 'has(object.spec.template.spec.containers) ? true : false'
+  - name: hasInitContainer
+    expression: 'has(object.spec.template.spec.initContainers) ? true : false'
+  - name: hasEphemeralContainer
+    expression: 'has(object.spec.template.spec.ephemeralContainers) ? true : false'
+  validations:
+    - expression: "
+      !variables.hasContainer ||
+      (object.spec.template.spec.containers.exists(container,
+        has(container.env) && 
+        container.env.exists(envVar, variables.userdata.exists(check, check==envVar.name &&  envVar.value.matches(variables.userdata[check]) )
+        )))
+      "
+      message: '❌ operator: containers not_contains_any, environment variables does not use any predefined key/value'
+    - expression: "
+      !variables.hasInitContainer ||
+      (object.spec.template.spec.initContainers.exists(container,
+        has(container.env) && 
+        container.env.exists(envVar, variables.userdata.exists(check, check==envVar.name && variables.userdata[check].matches(envVar.value) )
+        )))
+      "
+      message: '❌ operator: initContainers not_contains_any, environment variables does not use any predefined key/value'
+    - expression: "
+      !variables.hasEphemeralContainer ||
+      (object.spec.template.spec.ephemeralContainers.exists(container,
+        has(container.env) && 
+        container.env.exists(envVar, variables.userdata.exists(check, check==envVar.name && variables.userdata[check].matches(envVar.value) )
+        )))
+      "
+      message: '❌ operator: ephemeralContainers not_contains_any, environment variables does not use any predefined key/value'
