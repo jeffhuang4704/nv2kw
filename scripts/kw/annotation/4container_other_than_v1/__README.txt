@@ -1,0 +1,1 @@
+K8s automatically adds a few annotations, so using the "contains other than" operator may not be practical in real-world scenarios.
