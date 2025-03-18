@@ -10,7 +10,7 @@ spec:
   settings:
     variables:
     - name: allowedlist
-      expression: '{ "app": "^my-dep$" "good1": "^value1$", "good2": "^value2$"}'
+      expression: '{ "app": "^my-dep$", "good1": "^value1$", "good2": "^value2$"}'
     - name: dataset1a
       expression: 'has(object.metadata.labels) ? object.metadata.labels : []'
     - name: dataset1b
@@ -24,31 +24,31 @@ spec:
     - name: isType3
       expression: 'object.kind in ["CronJob"] ? true: false'
     validations:
-      - expression: '
-          !variables.isType1 ||
-          (
-            !variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))
-          )
-          '
-        message: '❌ operator: Labels must use only allowed key/value pairs. (contains other than)'
-      - expression: '
-          !variables.isType2 ||
-          (
-            (!variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))) 
-            &&
-            (!variables.dataset1b.exists(x, !(x in variables.allowedlist && matches(variables.dataset1b[x], variables.allowedlist[x])))) 
-          )
-          '
-        message: '❌ operator: deployment must use allowed key/value pairs. (contains other than)'
-      - expression: '
-          !variables.isType3 ||
-          (
-            (!variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))) 
-            &&
-            (!variables.dataset3.exists(x, !(x in variables.allowedlist && matches(variables.dataset3[x], variables.allowedlist[x])))) 
-          )
-          '
-        message: '❌ operator: cronjob must use allowed key/value pairs. (contains other than)'
+    - expression: '
+        !variables.isType1 ||
+        (
+          !variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))
+        )
+        '
+      message: '❌ operator: Labels must use only allowed key/value pairs. (contains other than)'
+    - expression: '
+        !variables.isType2 ||
+        (
+          (!variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))) 
+          &&
+          (!variables.dataset1b.exists(x, !(x in variables.allowedlist && matches(variables.dataset1b[x], variables.allowedlist[x])))) 
+        )
+        '
+      message: '❌ operator: deployment must use allowed key/value pairs. (contains other than)'
+    - expression: '
+        !variables.isType3 ||
+        (
+          (!variables.dataset1a.exists(x, !(x in variables.allowedlist && matches(variables.dataset1a[x], variables.allowedlist[x])))) 
+          &&
+          (!variables.dataset3.exists(x, !(x in variables.allowedlist && matches(variables.dataset3[x], variables.allowedlist[x])))) 
+        )
+        '
+      message: '❌ operator: cronjob must use allowed key/value pairs. (contains other than)'
   rules:
     - apiGroups: ["apps"]
       apiVersions: ["v1"]
