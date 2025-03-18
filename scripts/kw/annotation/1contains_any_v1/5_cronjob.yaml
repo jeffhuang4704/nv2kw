@@ -4,7 +4,8 @@ metadata:
   namespace: test
   name: hello-world
   annotations:
-    good: value1
+    good1: value1
+    bad1: value12222222222
 spec:
   schedule: "*/1 * * * *" # Runs every minute
   jobTemplate:
