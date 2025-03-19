@@ -11,7 +11,7 @@ spec:
   - image: nginx
     name: nginx
     env:
-    - name: bad
+    - name: bad1
       value: value1    
     resources: {}
   dnsPolicy: ClusterFirst
