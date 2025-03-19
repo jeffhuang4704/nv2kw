@@ -1,0 +1,15 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup
+metadata:
+  name: demo
+spec:
+  rules:
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      resources: ["pods"]
+      operations:
+        - CREATE
+        - UPDATE
+  policies:
+  expression: "reject_latest()"
+  message: "the image is using the latest tag or is not signed by Alice and Bob"
