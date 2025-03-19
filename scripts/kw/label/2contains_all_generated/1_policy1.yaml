@@ -1,0 +1,63 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: celtest1
+spec:
+  backgroundAudit: false
+  module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
+  mutating: false
+  rules:
+    - apiGroups:
+        - apps
+      apiVersions:
+        - v1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - deployments
+    - apiGroups:
+        - batch
+      apiVersions:
+        - v1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - cronjobs
+    - apiGroups:
+        - ""
+      apiVersions:
+        - v1
+      operations:
+        - CREATE
+        - UPDATE
+      resources:
+        - pods
+  settings:
+    validations:
+      - expression: ' !variables.isType1 || ( !variables.blacklist.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.blacklist[key])) ) '
+        message: '❌ operator: pod contains_all, labels cannot use all blacklist key/value'
+      - expression: ' !variables.isType2 || ( (!variables.blacklist.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.blacklist[key]))) && (!variables.blacklist.all(key, key in variables.dataset1b && variables.dataset1b[key].matches(variables.blacklist[key]))) ) '
+        message: '❌ operator: deployment contains_all, labels cannot use all blacklist key/value'
+      - expression: ' !variables.isType3 || ( (!variables.blacklist.all(key, key in variables.dataset1a && variables.dataset1a[key].matches(variables.blacklist[key]))) && (!variables.blacklist.all(key, key in variables.dataset3 && variables.dataset3[key].matches(variables.blacklist[key]))) ) '
+        message: '❌ operator: cronjob contains_all, labels cannot use all blacklist key/value'
+    variables:
+      - expression: '{"bad1": "^value1$", "bad2": "^value2$"}'
+        name: blacklist
+      - expression: 'has(object.metadata.labels) ? object.metadata.labels : []'
+        name: dataset1a
+      - expression: 'has(object.spec.template.metadata.labels) ? object.spec.template.metadata.labels : []'
+        name: dataset1b
+      - expression: 'has(object.spec.jobTemplate.metadata.labels) ? object.spec.jobTemplate.metadata.labels: []'
+        name: dataset3
+      - expression: 'object.kind in ["Pod"] ? true: false'
+        name: isType1
+      - expression: 'object.kind in ["Deployment","ReplicaSet","DaemonSet","StatefulSet","Job"] ? true: false'
+        name: isType2
+      - expression: 'object.kind in ["CronJob"] ? true: false'
+        name: isType3
+

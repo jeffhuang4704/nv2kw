@@ -1,0 +1,39 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicyGroup
+metadata:
+  name: demo
+spec:
+  rules:
+    - apiGroups: ["apps"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["deployments"]
+    - apiGroups: ["batch"]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["cronjobs"]
+    - apiGroups: [""]
+      apiVersions: ["v1"]
+      operations: ["CREATE", "UPDATE"]
+      resources: ["pods"]
+  policies:
+    maximum_replica:
+      module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
+      settings:
+        variables:
+          - name: "replicas"
+            expression: "object.spec.replicas"
+        validations:
+          - expression: "variables.replicas >= 3"
+            message: "The number of replicas must be greater than or equal 3"
+    mininum_replica:
+      module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
+      settings:
+        variables:
+          - name: "replicas"
+            expression: "object.spec.replicas"
+        validations:
+          - expression: "variables.replicas <= 15"
+            message: "The number of replicas must be less than or equal to 15"
+  expression: "(maximum_replica() && mininum_replica())"
+  message: "The replica count must be greater than 3 and less than 15."
