@@ -19,8 +19,8 @@ spec:
       operations:  ["CREATE", "UPDATE"]
       resources:   ["jobs","cronjobs"]
   variables:
-  - name: blacklist
-    expression: '{"bad1": "^value1$", "bad2": "^value2$", "bad3": "^value3$"}'
+  - name: userdata
+    expression: '{"good1": "^.*value1$", "good2": "^value2.*$", "good3": "^value3$", "good4": "^value.here$", "good5": "^aaa\\.bbb$"}'
   - name: isType1
     expression: 'object.kind in ["Pod"] ? true: false'
   - name: isType2
@@ -48,25 +48,34 @@ spec:
   validations:
     - expression: "
       !variables.hasContainer ||
-      (!variables.containerData.exists(container,
-        has(container.env) && 
-        variables.blacklist.all(check, container.env.exists(envVar, envVar.name==check && envVar.value.matches(variables.blacklist[check])))
-        ))
+      (variables.containerData.exists(container,
+        !has(container.env) || 
+        (
+          has(container.env) && 
+          !container.env.exists(envVar, !variables.userdata.exists(check, check==envVar.name &&  envVar.value.matches(variables.userdata[check]) )
+        )
+        )))
       "
-      message: '❌ operator: containers contains_all, environment variables cannot use all blacklist key/value'
+      message: '❌ operator: containers contains_other_than, environment variables must use only allowed key/value pairs.'
     - expression: "
       !variables.hasInitContainer ||
-      (!variables.initContainerData.exists(container,
-        has(container.env) && 
-        variables.blacklist.all(check, container.env.exists(envVar, envVar.name==check && envVar.value.matches(variables.blacklist[check])))
-        ))
+      (variables.initContainerData.exists(container,
+        !has(container.env) || 
+        (
+          has(container.env) && 
+          !container.env.exists(envVar, !variables.userdata.exists(check, check==envVar.name &&  envVar.value.matches(variables.userdata[check]) )
+        )
+        )))
       "
-      message: '❌ operator: initContainers contains_all, environment variables cannot use all blacklist key/value'
+      message: '❌ operator: initContainers contains_other_than, environment variables must use only allowed key/value pairs.'
     - expression: "
       !variables.hasEphemeralContainer ||
-      (!variables.ephemeralContainerData.exists(container,
-        has(container.env) && 
-        variables.blacklist.all(check, container.env.exists(envVar, envVar.name==check && envVar.value.matches(variables.blacklist[check])))
-        ))
+      (variables.ephemeralContainerData.exists(container,
+        !has(container.env) || 
+        (
+          has(container.env) && 
+          !container.env.exists(envVar, !variables.userdata.exists(check, check==envVar.name &&  envVar.value.matches(variables.userdata[check]) )
+        )
+        )))
       "
-      message: '❌ operator: ephemeralContainers contains_all, environment variables cannot use all blacklist key/value'
+      message: '❌ operator: ephemeralContainers contains_other_than, environment variables must use only allowed key/value pairs.'

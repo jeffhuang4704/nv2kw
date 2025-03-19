@@ -2,9 +2,12 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   creationTimestamp: null
+  annotations:
+    good1: value1
+    bad1: value12222222222
   labels:
     app: my-dep
-    prohibit2: value2
+    bad: value2
   name: my-dep
   namespace: test
 spec:
@@ -16,22 +19,17 @@ spec:
   template:
     metadata:
       creationTimestamp: null
+      annotations:
+        good2: value1
       labels:
         app: my-dep
         prohibit4: any
     spec:
-      initContainers:
-      - name: init-sleep
-        image: busybox
-        command: ["sleep", "10"]
-        env:
-        - name: bad
-          value: value1
       containers:
       - image: nginx
         name: nginx
         env:
-        - name: bad
+        - name: bad1
           value: value1
         - name: bad2
           value: value2
