@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: nginx
+  name: nginx
+  namespace: test
+spec:
+  containers:
+  - image: nginx
+    name: nginx
+    env:
+    - name: bad1
+      value: value1
+    - name: bad2
+      value: value2
+    - name: bad3
+      value: value3
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
