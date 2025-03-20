@@ -142,6 +142,24 @@ spec:
           name: isType3
   rules:
   - apiGroups:
+    - apps
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - deployments
+  - apiGroups:
+    - batch
+    apiVersions:
+    - v1
+    operations:
+    - CREATE
+    - UPDATE
+    resources:
+    - cronjobs
+  - apiGroups:
     - ""
     apiVersions:
     - v1
