@@ -70,6 +70,12 @@
       ],
       "criteria": [
         {
+          "name": "envVars",
+          "op": "containsAny",
+          "path": "envVars",
+          "value": "bad1=value1,bad2=value2*,bad3=*value3"
+        },
+        {
           "name": "labels",
           "op": "containsAny",
           "path": "labels",
