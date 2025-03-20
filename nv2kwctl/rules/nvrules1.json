@@ -64,7 +64,7 @@
     {
       "category": "Kubernetes",
       "cfg_type": "user_created",
-      "comment": "Block deployments with bad envVars, labels, and annotations.",
+      "comment": "Block deployments with bad labels and annotations.",
       "containers": [
         "containers"
       ],
