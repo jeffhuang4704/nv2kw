@@ -49,7 +49,7 @@
       ],
       "criteria": [
         {
-          "name": "annotations",
+          "name": "annotations__SKIP",
           "op": "containsAny",
           "path": "annotations",
           "value": "bad1,bad2"
@@ -73,7 +73,19 @@
           "name": "envVars",
           "op": "containsAny",
           "path": "envVars",
-          "value": "badenv1,badenv2"
+          "value": "bad1=value1,bad2=value2*,bad3=*value3"
+        },
+        {
+          "name": "labels",
+          "op": "containsAny",
+          "path": "labels",
+          "value": "bad1=value1*,bad2=value2"
+        },
+        {
+          "name": "annotations",
+          "op": "containsAny",
+          "path": "annotations",
+          "value": "bad1=value1,bad2=value2*"
         }
       ],
       "critical": false,
@@ -91,7 +103,7 @@
       ],
       "criteria": [
         {
-          "name": "labels",
+          "name": "labels___SKIP",
           "op": "containsAny",
           "path": "labels",
           "value": "badlabel1,badlabel2"
