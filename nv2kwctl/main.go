@@ -52,7 +52,8 @@ func GeneratePolicies(rule *nvapis.RESTAdmissionRule) (map[string]interface{}, e
 		}
 
 		u := &unstructured.Unstructured{Object: yamlObj}
-		settings, found, err := unstructured.NestedMap(u.Object, "spec", "settings")
+		// settings, found, err := unstructured.NestedMap(u.Object, "spec", "settings")
+		settings, found, err := unstructured.NestedMap(u.Object, "spec")
 		if err != nil || !found {
 			return nil, fmt.Errorf("failed to extract spec.settings: %w", err)
 		}
@@ -69,18 +70,48 @@ func GeneratePolicies(rule *nvapis.RESTAdmissionRule) (map[string]interface{}, e
 }
 
 func UpdateExpression(settings map[string]interface{}, criterion *nvapis.RESTAdmRuleCriterion) error {
-	if variables, ok := settings["variables"].([]interface{}); ok {
-		for i, v := range variables {
-			if variable, ok := v.(map[string]interface{}); ok && variable["name"] == "blacklist" {
-				variable["expression"] = parseAndFormat(criterion.Value)
-				variables[i] = variable
-				settings["variables"] = variables
-				return nil
-			}
+	// Navigate to settings["settings"]["variables"]
+	nestedSettings, ok := settings["settings"].(map[string]interface{})
+	if !ok {
+		return fmt.Errorf("unable to find 'settings' in the provided map")
+	}
+
+	// Remove unwanted keys
+	delete(settings, "mutating")
+	delete(settings, "rules")
+	delete(settings, "backgroundAudit")
+
+	variables, ok := nestedSettings["variables"].([]interface{})
+	if !ok {
+		return fmt.Errorf("unable to find 'variables' in 'settings'")
+	}
+
+	// Iterate through variables and update
+	for i, v := range variables {
+		if variable, ok := v.(map[string]interface{}); ok && variable["name"] == "blacklist" {
+			variable["expression"] = parseAndFormat(criterion.Value)
+			variables[i] = variable
+			nestedSettings["variables"] = variables
+			return nil
 		}
 	}
-	return fmt.Errorf("variable 'blacklist' not found in settings")
+
+	return nil
 }
+
+// func UpdateExpression(settings map[string]interface{}, criterion *nvapis.RESTAdmRuleCriterion) error {
+// 	if variables, ok := settings["variables"].([]interface{}); ok {
+// 		for i, v := range variables {
+// 			if variable, ok := v.(map[string]interface{}); ok && variable["name"] == "blacklist" {
+// 				variable["expression"] = parseAndFormat(criterion.Value)
+// 				variables[i] = variable
+// 				settings["variables"] = variables
+// 				return nil
+// 			}
+// 		}
+// 	}
+// 	return fmt.Errorf("variable 'blacklist' not found in settings")
+// }
 
 func ApplyPolicies(policies map[string]interface{}, baseFilePath string) error {
 	baseYAML, err := readYAML(baseFilePath)

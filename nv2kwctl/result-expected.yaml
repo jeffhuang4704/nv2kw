@@ -15,18 +15,18 @@ spec:
             ) '
           message: '❌ operator: pod contains_any, annotations cannot use any blacklist
             key/value'
-        - expression: ' !variables.isType2 || ( (!variables.dataset1a.exists(key,
-            key in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
+        - expression: ' !variables.isType2 || ( (!variables.dataset1a.exists(key, key
+            in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
             && (!variables.dataset1b.exists(key, key in variables.blacklist && variables.dataset1b[key].matches(variables.blacklist[key])))
             ) '
           message: '❌ operator: deployment contains_any, annotations cannot use any
             blacklist key/value'
-        - expression: ' !variables.isType3 || ( (!variables.dataset1a.exists(key,
-            key in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
-            && (!variables.dataset3.exists(key, key in variables.blacklist && variables.dataset3[key].matches(variables.blacklist[key])))
-            ) '
-          message: '❌ operator: cronjob contains_any, annotations cannot use any blacklist
-            key/value'
+        - expression: ' !variables.isType3 || ( (!variables.dataset1a.exists(key, key
+          in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
+          && (!variables.dataset3.exists(key, key in variables.blacklist && variables.dataset3[key].matches(variables.blacklist[key])))
+          ) '
+        message: '❌ operator: cronjob contains_any, annotations cannot use any blacklist
+          key/value'
         variables:
         - expression: '{"bad1": "^value1$", "bad2": "^value2.*$"}'
           name: blacklist
@@ -52,24 +52,24 @@ spec:
         validations:
         - expression: ' !variables.hasContainer || (!variables.containerData.exists(container,
             has(container.env) && container.env.exists(envVar, variables.blacklist.exists(check,
-            check==envVar.name && envVar.value.matches(variables.blacklist[check])
-            ) ))) '
+            check==envVar.name && envVar.value.matches(variables.blacklist[check]) )
+            ))) '
           message: '❌ operator: containers contains_any, environment variables cannot
             use any blacklist key/value'
         - expression: ' !variables.hasInitContainer || (!variables.initContainerData.exists(container,
             has(container.env) && container.env.exists(envVar, variables.blacklist.exists(check,
-            check==envVar.name && envVar.value.matches(variables.blacklist[check])
-            ) ))) '
-          message: '❌ operator: initContainers contains_any, environment variables
-            cannot use any blacklist key/value'
+            check==envVar.name && envVar.value.matches(variables.blacklist[check]) )
+            ))) '
+          message: '❌ operator: initContainers contains_any, environment variables cannot
+            use any blacklist key/value'
         - expression: ' !variables.hasEphemeralContainer || (!variables.ephemeralContainerData.exists(container,
             has(container.env) && container.env.exists(envVar, variables.blacklist.exists(check,
-            check==envVar.name && envVar.value.matches(variables.blacklist[check])
-            ) ))) '
+            check==envVar.name && envVar.value.matches(variables.blacklist[check]) )
+            ))) '
           message: '❌ operator: ephemeralContainers contains_any, environment variables
             cannot use any blacklist key/value'
         variables:
-        - expression: '{"bad1": "^value1$", "bad2": "^value2.*$", "bad3": "^.*value3$"}'
+        - expression: '{"bad3": "^.*value3$", "bad1": "^value1$", "bad2": "^value2.*$"}'
           name: blacklist
         - expression: 'object.kind in ["Pod"] ? true: false'
           name: isType1
@@ -86,18 +86,16 @@ spec:
           name: hasContainer
         - expression: 'variables.isType1 ? (has(object.spec.initContainers)? object.spec.initContainers
             : []) : variables.isType2 ? (has(object.spec.template.spec.initContainers)
-            ? object.spec.template.spec.initContainers : []) : variables.isType3 ?
-            (has(object.spec.jobTemplate.spec.template.spec.initContainers) ? object.spec.jobTemplate.spec.template.spec.initContainers:
-            []) : []'
+            ? object.spec.template.spec.initContainers : []) : variables.isType3 ? (has(object.spec.jobTemplate.spec.template.spec.initContainers)
+            ? object.spec.jobTemplate.spec.template.spec.initContainers: []) : []'
           name: initContainerData
         - expression: 'variables.initContainerData.size() > 0 ? true : false'
           name: hasInitContainer
-        - expression: 'variables.isType1 ? (has(object.spec.ephemeralContainers)?
-            object.spec.ephemeralContainers : []) : variables.isType2 ? (has(object.spec.template.spec.ephemeralContainers)
+        - expression: 'variables.isType1 ? (has(object.spec.ephemeralContainers)? object.spec.ephemeralContainers
+            : []) : variables.isType2 ? (has(object.spec.template.spec.ephemeralContainers)
             ? object.spec.template.spec.ephemeralContainers : []) : variables.isType3
-            ? (has(object.spec.jobTemplate.spec.template.spec.ephemeralContainers)
-            ? object.spec.jobTemplate.spec.template.spec.ephemeralContainers: [])
-            : []'
+            ? (has(object.spec.jobTemplate.spec.template.spec.ephemeralContainers) ?
+            object.spec.jobTemplate.spec.template.spec.ephemeralContainers: []) : []'
           name: ephemeralContainerData
         - expression: 'variables.ephemeralContainerData.size() > 0 ? true : false'
           name: hasEphemeralContainer
@@ -108,16 +106,15 @@ spec:
         - expression: ' !variables.isType1 || ( !variables.dataset1a.exists(key, key
             in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key]))
             ) '
-          message: '❌ operator: pod contains_any, labels cannot use any blacklist
-            key/value'
-        - expression: ' !variables.isType2 || ( (!variables.dataset1a.exists(key,
-            key in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
+          message: '❌ operator: pod contains_any, labels cannot use any blacklist key/value'
+        - expression: ' !variables.isType2 || ( (!variables.dataset1a.exists(key, key
+            in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
             && (!variables.dataset1b.exists(key, key in variables.blacklist && variables.dataset1b[key].matches(variables.blacklist[key])))
             ) '
           message: '❌ operator: deployment contains_any, labels cannot use any blacklist
             key/value'
-        - expression: ' !variables.isType3 || ( (!variables.dataset1a.exists(key,
-            key in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
+        - expression: ' !variables.isType3 || ( (!variables.dataset1a.exists(key, key
+            in variables.blacklist && variables.dataset1a[key].matches(variables.blacklist[key])))
             && (!variables.dataset3.exists(key, key in variables.blacklist && variables.dataset3[key].matches(variables.blacklist[key])))
             ) '
           message: '❌ operator: cronjob contains_any, labels cannot use any blacklist
@@ -151,4 +148,3 @@ spec:
     resources:
     - pods
 
----
