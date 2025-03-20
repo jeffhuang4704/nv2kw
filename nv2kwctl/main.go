@@ -34,7 +34,8 @@ func ProcessRules(nvRuleFile string) error {
 			return fmt.Errorf("failed to generate policies: %w", err)
 		}
 
-		if err := ApplyPolicies(policies, "./templates/base.yaml"); err != nil {
+		policyMessage := fmt.Sprintf("Policy from NeuVector rule ID %d. %s", rule.ID, rule.Comment)
+		if err := ApplyPolicies(policies, policyMessage, "./templates/base.yaml"); err != nil {
 			return fmt.Errorf("failed to apply policies: %w", err)
 		}
 	}
@@ -99,7 +100,7 @@ func UpdateExpression(settings map[string]interface{}, criterion *nvapis.RESTAdm
 	return nil
 }
 
-func ApplyPolicies(policies map[string]interface{}, baseFilePath string) error {
+func ApplyPolicies(policies map[string]interface{}, policyMessage string, baseFilePath string) error {
 	baseYAML, err := readYAML(baseFilePath)
 	if err != nil {
 		return err
@@ -112,6 +113,11 @@ func ApplyPolicies(policies map[string]interface{}, baseFilePath string) error {
 
 	if err := unstructured.SetNestedField(base.Object, getPolicyKeys(policies), "spec", "expression"); err != nil {
 		return fmt.Errorf("failed to update expression: %w", err)
+	}
+
+	// Modify spec.message
+	if err := unstructured.SetNestedField(base.Object, policyMessage, "spec", "message"); err != nil {
+		return fmt.Errorf("failed to update message: %w", err)
 	}
 
 	finalYAML, err := yaml.Marshal(base.Object)

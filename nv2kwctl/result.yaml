@@ -4,7 +4,8 @@ metadata:
   name: demo
 spec:
   expression: policy_envVars_containsAny() || policy_labels_containsAny() || policy_annotations_containsAny()
-  message: the image is using the latest tag or is not signed by Alice and Bob
+  message: Policy from NeuVector rule ID 1001. Block deployments with bad envVars,
+    labels, and annotations.
   policies:
     policy_annotations_containsAny:
       module: registry://ghcr.io/kubewarden/policies/cel-policy:latest
