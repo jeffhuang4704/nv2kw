@@ -99,20 +99,6 @@ func UpdateExpression(settings map[string]interface{}, criterion *nvapis.RESTAdm
 	return nil
 }
 
-// func UpdateExpression(settings map[string]interface{}, criterion *nvapis.RESTAdmRuleCriterion) error {
-// 	if variables, ok := settings["variables"].([]interface{}); ok {
-// 		for i, v := range variables {
-// 			if variable, ok := v.(map[string]interface{}); ok && variable["name"] == "blacklist" {
-// 				variable["expression"] = parseAndFormat(criterion.Value)
-// 				variables[i] = variable
-// 				settings["variables"] = variables
-// 				return nil
-// 			}
-// 		}
-// 	}
-// 	return fmt.Errorf("variable 'blacklist' not found in settings")
-// }
-
 func ApplyPolicies(policies map[string]interface{}, baseFilePath string) error {
 	baseYAML, err := readYAML(baseFilePath)
 	if err != nil {
@@ -205,7 +191,8 @@ func getPolicyKeys(policies map[string]interface{}) string {
 	for key := range policies {
 		keys = append(keys, key+"()")
 	}
-	return strings.Join(keys, " && ")
+	// return strings.Join(keys, " && ")
+	return strings.Join(keys, " || ")
 }
 
 func parseAndFormat(input string) string {

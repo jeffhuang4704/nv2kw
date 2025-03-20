@@ -3,7 +3,7 @@ kind: ClusterAdmissionPolicyGroup
 metadata:
   name: demo
 spec:
-  expression: policy_envVars_containsAny() && policy_labels_containsAny() && policy_annotations_containsAny()
+  expression: policy_envVars_containsAny() || policy_labels_containsAny() || policy_annotations_containsAny()
   message: the image is using the latest tag or is not signed by Alice and Bob
   policies:
     policy_annotations_containsAny:
