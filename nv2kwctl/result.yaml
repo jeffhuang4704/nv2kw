@@ -26,7 +26,7 @@ spec:
         message: '❌ operator: cronjob contains_any, annotations cannot use any blacklist
           key/value'
       variables:
-      - expression: '{"bad1": "^value1$", "bad2": "^value2.*$"}'
+      - expression: '{"bad2": "^value2.*$", "bad1": "^value1$"}'
         name: blacklist
       - expression: 'has(object.metadata.annotations) ? object.metadata.annotations
           : []'

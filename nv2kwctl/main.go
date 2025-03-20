@@ -13,15 +13,15 @@ import (
 )
 
 func main() {
-	Test1_ParseJSONFile()
+	if err := ProcessRules("./rules/nvrules1.json"); err != nil {
+		log.Fatalf("Error processing rules: %v", err)
+	}
 }
 
-func Test1_ParseJSONFile() {
-	nvRuleFile := "./rules/nvrules1.json"
+func ProcessRules(nvRuleFile string) error {
 	ruleObj, err := ParseJSONFile(nvRuleFile)
 	if err != nil {
-		fmt.Printf("failed to parse JSON file: %v\n", err)
-		return
+		return fmt.Errorf("failed to parse JSON file: %w", err)
 	}
 
 	for _, rule := range ruleObj.Rules {
@@ -29,77 +29,82 @@ func Test1_ParseJSONFile() {
 			continue
 		}
 
-		// Insert into spec.policies with unique names
-		policies := map[string]interface{}{}
-
-		for _, criterion := range rule.Criteria {
-			yamlFile := fmt.Sprintf("./templates/%s_%s.yaml", criterion.Name, criterion.Op)
-			data, err := os.ReadFile(yamlFile)
-			if err != nil {
-				log.Fatalf("Failed to read YAML file: %v", err)
-			}
-
-			// Convert YAML to Unstructured
-			var yamlObj map[string]interface{}
-			if err := yaml.Unmarshal(data, &yamlObj); err != nil {
-				log.Fatalf("Failed to unmarshal YAML: %v", err)
-			}
-			u := &unstructured.Unstructured{Object: yamlObj}
-
-			// Extract spec.settings
-			settings, found, err := unstructured.NestedMap(u.Object, "spec", "settings")
-			if err != nil || !found {
-				log.Fatalf("Failed to extract spec.settings: %v", err)
-			}
-
-			//TODO: update operator value, use a more generic name instead of "blacklist"
-			// Modify the "expression" value
-			if variables, ok := settings["variables"].([]interface{}); ok {
-				for i, v := range variables {
-					if variable, ok := v.(map[string]interface{}); ok && variable["name"] == "blacklist" {
-						userInput := parseAndFormat(criterion.Value)
-						variable["expression"] = userInput // Modify the expression here
-						variables[i] = variable            //update the slice.
-						settings["variables"] = variables  //Update the settings map.
-						break                              // Exit the loop after modification
-					}
-				}
-			}
-
-			policy_name := fmt.Sprintf("policy_%s_%s", criterion.Name, criterion.Op)
-			policies[policy_name] = settings
-		}
-
-		//TODO: read base.yaml, combine all the policies generated from the criteria loop above
-		baseYAMLFile := "./templates/base.yaml"
-		baseYAML, err := readYAML(baseYAMLFile)
+		policies, err := GeneratePolicies(rule)
 		if err != nil {
-			log.Fatalf("%v", err)
+			return fmt.Errorf("failed to generate policies: %w", err)
 		}
 
-		// Convert to Unstructured for manipulation
-		base := &unstructured.Unstructured{Object: baseYAML}
-
-		if err := unstructured.SetNestedField(base.Object, policies, "spec", "policies"); err != nil {
-			log.Fatalf("Failed to insert policies: %v", err)
+		if err := ApplyPolicies(policies, "./templates/base.yaml"); err != nil {
+			return fmt.Errorf("failed to apply policies: %w", err)
 		}
-
-		// format the expression
-		policy_expression := getPolicyKeys(policies)
-		newExpression := policy_expression
-		if err := unstructured.SetNestedField(base.Object, newExpression, "spec", "expression"); err != nil {
-			log.Fatalf("Failed to update expression: %v", err)
-		}
-
-		// Convert back to YAML
-		finalYAML, err := yaml.Marshal(base.Object)
-		if err != nil {
-			log.Fatalf("Failed to marshal final YAML: %v", err)
-		}
-
-		fmt.Println(string(finalYAML))
-		fmt.Println("---")
 	}
+	return nil
+}
+
+func GeneratePolicies(rule *nvapis.RESTAdmissionRule) (map[string]interface{}, error) {
+	policies := make(map[string]interface{})
+
+	for _, criterion := range rule.Criteria {
+		yamlFile := fmt.Sprintf("./templates/%s_%s.yaml", criterion.Name, criterion.Op)
+		yamlObj, err := readYAML(yamlFile)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read or parse YAML: %w", err)
+		}
+
+		u := &unstructured.Unstructured{Object: yamlObj}
+		settings, found, err := unstructured.NestedMap(u.Object, "spec", "settings")
+		if err != nil || !found {
+			return nil, fmt.Errorf("failed to extract spec.settings: %w", err)
+		}
+
+		if err := UpdateExpression(settings, criterion); err != nil {
+			return nil, err
+		}
+
+		policyName := fmt.Sprintf("policy_%s_%s", criterion.Name, criterion.Op)
+		policies[policyName] = settings
+	}
+
+	return policies, nil
+}
+
+func UpdateExpression(settings map[string]interface{}, criterion *nvapis.RESTAdmRuleCriterion) error {
+	if variables, ok := settings["variables"].([]interface{}); ok {
+		for i, v := range variables {
+			if variable, ok := v.(map[string]interface{}); ok && variable["name"] == "blacklist" {
+				variable["expression"] = parseAndFormat(criterion.Value)
+				variables[i] = variable
+				settings["variables"] = variables
+				return nil
+			}
+		}
+	}
+	return fmt.Errorf("variable 'blacklist' not found in settings")
+}
+
+func ApplyPolicies(policies map[string]interface{}, baseFilePath string) error {
+	baseYAML, err := readYAML(baseFilePath)
+	if err != nil {
+		return err
+	}
+
+	base := &unstructured.Unstructured{Object: baseYAML}
+	if err := unstructured.SetNestedField(base.Object, policies, "spec", "policies"); err != nil {
+		return fmt.Errorf("failed to insert policies: %w", err)
+	}
+
+	if err := unstructured.SetNestedField(base.Object, getPolicyKeys(policies), "spec", "expression"); err != nil {
+		return fmt.Errorf("failed to update expression: %w", err)
+	}
+
+	finalYAML, err := yaml.Marshal(base.Object)
+	if err != nil {
+		return fmt.Errorf("failed to marshal final YAML: %w", err)
+	}
+
+	fmt.Println(string(finalYAML))
+	fmt.Println("---")
+	return nil
 }
 
 func readYAML(filePath string) (map[string]interface{}, error) {
@@ -164,6 +169,14 @@ func ParseJSONFile(filename string) (*nvapis.RESTAdmissionRulesData, error) {
 	return &data, nil
 }
 
+func getPolicyKeys(policies map[string]interface{}) string {
+	keys := make([]string, 0, len(policies))
+	for key := range policies {
+		keys = append(keys, key+"()")
+	}
+	return strings.Join(keys, " && ")
+}
+
 func parseAndFormat(input string) string {
 	pairs := strings.Split(input, ",")
 	result := make(map[string]string)
@@ -203,12 +216,4 @@ func parseAndFormat(input string) string {
 	builder.WriteString("}")
 
 	return builder.String()
-}
-
-func getPolicyKeys(policies map[string]interface{}) string {
-	keys := make([]string, 0, len(policies))
-	for key := range policies {
-		keys = append(keys, key+"()")
-	}
-	return strings.Join(keys, " && ")
 }
