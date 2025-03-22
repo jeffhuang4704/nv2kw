@@ -165,6 +165,8 @@ func main() {
 	printYaml(settings)
 }
 
+
+
 func getSettings(yamlData map[string]interface{}) (map[string]interface{}, error) {
 	// Get the settings field
 	settings, found, err := unstructured.NestedMap(yamlData, "spec", "settings")
