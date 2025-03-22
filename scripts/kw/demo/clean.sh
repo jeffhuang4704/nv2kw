@@ -1,1 +1,2 @@
-kubectl delete -f 1_policy.yaml
+kubectl delete -f result.yaml
+
