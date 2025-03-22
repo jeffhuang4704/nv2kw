@@ -1,0 +1,27 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: celtest1
+  level:
+    another: info 
+    testdata:
+      - value1
+      - value2
+spec:
+  tags: 
+    - original1
+    - original2
+    - original3
+  settings:
+    config:
+      timeout: "10s"
+      retries: 1
+      logLevel: "error"
+    items:
+      - name: item1
+        value: value1
+      - name: item2
+        value: value2

@@ -1,0 +1,38 @@
+apiVersion: policies.kubewarden.io/v1
+kind: ClusterAdmissionPolicy
+metadata:
+  annotations:
+    io.kubewarden.policy.category: Resource validation
+    io.kubewarden.policy.severity: low
+  name: celtest1
+  level:
+    another: info 
+    testdata:
+      - value1
+      - value2
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-dep
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: my-dep
+        prohibit4: any
+    spec:
+      containers:
+      - image: alpine
+        name: alpine
+        env:
+        - name: keyA
+          value: valueA
+      - image: nginx
+        name: nginx
+        env:
+        - name: key1
+          value: value1
+        - name: key2
+          value: value2
